@@ -50,3 +50,14 @@ CREATE TABLE Clients (
     Client_Email VARCHAR(100),
     Client_Address VARCHAR(255)
 );
+
+CREATE TABLE Payment (
+    Payment_ID INT PRIMARY KEY,
+    Booking_ID INT,
+    Client_ID INT,
+    Amount DECIMAL(10, 2),
+    Payment_Date DATE,
+    Payment_Method VARCHAR(50),
+    FOREIGN KEY (Booking_ID) REFERENCES Bookings(Booking_ID),
+    FOREIGN KEY (Client_ID) REFERENCES Clients(Client_ID)
+);
