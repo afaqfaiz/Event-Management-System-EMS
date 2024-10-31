@@ -1,0 +1,1 @@
+CREATE table companies if not exists (comp_id,comp_name,comp_contact,comp_email,comp_address);
