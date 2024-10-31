@@ -43,4 +43,10 @@ CREATE TABLE Bookings (
     FOREIGN KEY (Hall_ID) REFERENCES Hall(Hall_ID),
     FOREIGN KEY (Company_ID) REFERENCES Company(Company_ID)
 );
-
+CREATE TABLE Clients (
+    Client_ID INT PRIMARY KEY,
+    Client_Name VARCHAR(100),
+    Client_ContactNumber VARCHAR(15),
+    Client_Email VARCHAR(100),
+    Client_Address VARCHAR(255)
+);
