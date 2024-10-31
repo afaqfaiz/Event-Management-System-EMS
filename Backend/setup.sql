@@ -29,3 +29,18 @@ CREATE TABLE Events (
     Event_Attenders INT,
     FOREIGN KEY (Hall_ID) REFERENCES Hall(Hall_ID)
 );
+CREATE TABLE Bookings (
+    Booking_ID INT PRIMARY KEY,
+    Event_ID INT,
+    Hall_ID INT,
+    Client_ID INT,
+    Booking_Date DATE,
+    Booking_StartDateTime DATETIME,
+    Booking_EndDateTime DATETIME,
+    Company_ID INT,
+    Total_Cost DECIMAL(10, 2),
+    FOREIGN KEY (Event_ID) REFERENCES Events(Event_ID),
+    FOREIGN KEY (Hall_ID) REFERENCES Hall(Hall_ID),
+    FOREIGN KEY (Company_ID) REFERENCES Company(Company_ID)
+);
+
