@@ -5,7 +5,7 @@ CREATE TABLE Company (
     Company_Email VARCHAR(100),
     Company_Address VARCHAR(255),
     Company_Owner VARCHAR(100),
-    Company_password VARCHAR(100),
+    Company_password VARCHAR(100)
 );
 
 CREATE TABLE Hall (
@@ -50,7 +50,7 @@ CREATE TABLE Clients (
     Client_ContactNumber VARCHAR(15),
     Client_Email VARCHAR(100),
     Client_Address VARCHAR(255),
-    Client_Password VARCHAR(255),
+    Client_Password VARCHAR(255)
 );
 
 CREATE TABLE Payment (
@@ -63,4 +63,6 @@ CREATE TABLE Payment (
     FOREIGN KEY (Booking_ID) REFERENCES Bookings(Booking_ID),
     FOREIGN KEY (Client_ID) REFERENCES Clients(Client_ID)
 );
+
+-- DROP TABLE Company,Hall,Events,Bookings,Clients,Payment;
 
