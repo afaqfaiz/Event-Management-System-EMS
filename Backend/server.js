@@ -30,6 +30,18 @@ app.get('/api/companies', (req, res) => {
         }
     });
 });
+//select all from clients
+app.get('/api/clients', (req, res) => {
+    db.query('SELECT * FROM Clients', (err, results) => {
+        if (err) {
+            console.error('Error fetching Clients:', err); // Log error to console
+            res.status(500).send({ error: 'Database query error' });
+        } else {
+            console.log('Fetched Clients:', results); // Log results to console
+            res.json(results);
+        }
+    });
+});
 
 //select from company by id 
 app.get('/api/companies1', (req, res) => {
@@ -212,30 +224,295 @@ app.delete('/api/hall/:id', (req, res) => {
     });
 });
 
-// app.get('/api/halls', (req, res) => {
-//     const token = req.headers.authorization?.split(' ')[1]; // Extract the token
 
-//     if (!token) {
-//         return res.status(401).send('Unauthorized');
-//     }
 
-//     const companyId = getCompanyIdFromToken(token); // Decode token to get company ID
 
-//     db.query('SELECT * FROM Hall WHERE Company_ID = ?', [companyId], (err, results) => {
+
+//----------------------client-----------------------------------------------------------------------------
+
+//------------client registration
+
+app.post('/api/register/client', (req, res) => {
+    const {
+        clientName: Client_Name,
+        clientContact: Client_ContactNumber,
+        clientEmail: Client_Email,
+        clientAddress: Client_Address,
+      clientPassword: Client_Password
+     } = req.body;
+ 
+    // Query to insert the new client user
+    db.query(
+        'INSERT INTO  Clients (Client_Name,Client_ContactNumber,Client_Email,Client_Address,Client_Password) VALUES (?, ?, ?,?,?)',
+        [Client_Name,Client_ContactNumber,Client_Email,Client_Address,Client_Password],
+        (err, result) => {
+            if (err) {
+                if (err.code === 'ER_DUP_ENTRY') {
+                    return res.status(409).send("Username already exists.");
+                }
+                return res.status(500).send(err);
+            }
+            res.status(201).send("User registered successfully");
+        }
+    );
+});
+
+//---------------------client authentication
+app.post('/api/client/login', (req, res) => {
+    const { Client_Email, Client_Password } = req.body;
+    console.log(Client_Email);
+    console.log(Client_Password);
+    if (!Client_Email || !Client_Password) {
+        return res.status(400).send('email and password are required');
+    }
+
+    const query = 'SELECT * FROM Clients WHERE Client_Email = ? AND Client_Password = ?';
+    db.query(query, [Client_Email, Client_Password], (err, results) => {
+        if (err) {
+            console.error('Error executing query:', err);
+            return res.status(500).send('Server error');
+        }
+
+        if (results.length > 0) {
+            res.status(200).send('Login successful!');
+        } else {
+            res.status(401).send('Invalid email or password');
+        }
+    });
+});
+
+//------------------client data for dashboard
+
+
+
+app.get('/api/client-details/:email', (req, res) => {
+    const clientEmail = req.params.email;
+
+    console.log('Received request for client email:', clientEmail);
+
+    // Queries for retrieving data
+    const clientQuery = `
+        SELECT 
+            Client_ID, 
+            Client_Name, 
+            Client_ContactNumber, 
+            Client_Email, 
+            Client_Address 
+        FROM Clients 
+        WHERE Client_Email = ?`;
+
+    const bookingsQuery = `
+        SELECT 
+            b.Booking_ID, 
+            b.Booking_Date, 
+            b.Booking_StartDateTime, 
+            b.Booking_EndDateTime, 
+            b.Total_Cost, 
+            e.Event_name, 
+            e.Event_type, 
+            h.Hall_name, 
+            h.Hall_location 
+        FROM Bookings b
+        JOIN Events e ON b.Event_ID = e.Event_ID
+        JOIN Hall h ON b.Hall_ID = h.Hall_ID
+        WHERE b.Client_ID = ?`;
+
+    const paymentsQuery = `
+        SELECT 
+            p.Payment_ID, 
+            p.Amount, 
+            p.Payment_Date, 
+            p.Payment_Method 
+        FROM Payment p
+        WHERE p.Client_ID = ?`;
+
+    // Fetch client details
+    db.query(clientQuery, [clientEmail], (err, clientResults) => {
+        if (err) {
+            console.error('Error fetching client details:', err);
+            return res.status(500).json({ error: 'Server error while fetching client details' });
+        }
+
+        if (clientResults.length === 0) {
+            console.log('Client not found');
+            return res.status(404).json({ error: 'Client not found' });
+        }
+
+        const client = clientResults[0];
+        const clientId = client.Client_ID;
+
+        // Fetch bookings
+        db.query(bookingsQuery, [clientId], (err, bookingsResults) => {
+            if (err) {
+                console.error('Error fetching bookings:', err);
+                return res.status(500).json({ error: 'Failed to fetch bookings' });
+            }
+
+            // Fetch payments
+            db.query(paymentsQuery, [clientId], (err, paymentsResults) => {
+                if (err) {
+                    console.error('Error fetching payments:', err);
+                    return res.status(500).json({ error: 'Failed to fetch payments' });
+                }
+
+                // Send response to client
+                res.json({
+                    client: {
+                        id: client.Client_ID,
+                        name: client.Client_Name,
+                        contact: client.Client_ContactNumber,
+                        email: client.Client_Email,
+                        address: client.Client_Address,
+                    },
+                    bookings: bookingsResults.map((booking) => ({
+                        id: booking.Booking_ID,
+                        date: booking.Booking_Date,
+                        startTime: booking.Booking_StartDateTime,
+                        endTime: booking.Booking_EndDateTime,
+                        totalCost: booking.Total_Cost,
+                        eventName: booking.Event_name,
+                        eventType: booking.Event_type,
+                        hallName: booking.Hall_name,
+                        hallLocation: booking.Hall_location,
+                    })),
+                    payments: paymentsResults.map((payment) => ({
+                        id: payment.Payment_ID,
+                        amount: payment.Amount,
+                        date: payment.Payment_Date,
+                        method: payment.Payment_Method,
+                    })),
+                });
+            });
+        });
+    });
+});
+
+
+// app.get('/api/client-details/:email', (req, res) => {
+//     const Client_Email = req.params.email;
+//     console.log('Received request for email:', Client_Email);
+
+//     const nameidquery = `SELECT Client_ID, Client_Name, Client_Email, Client_ContactNumber 
+//                          FROM Clients WHERE Client_Email = ?`;
+//     const bookingsQuery = `SELECT Booking_ID, Event_name, Hall_name, Booking_Date, Status 
+//                            FROM Bookings WHERE Client_ID = ?`;
+//     const paymentsQuery = `SELECT Payment_ID, Amount, Payment_Date, Payment_Method 
+//                            FROM Payment WHERE Client_ID = ?`;
+
+//     // Fetch client information
+//     db.query(nameidquery, [Client_Email], (err, result) => {
 //         if (err) {
-//             return res.status(500).send(err);
+//             console.error('Error fetching client details:', err);
+//             return res.status(500).json({ error: 'Server error while fetching client details' });
 //         }
-//         res.json(results); // Send halls data
+
+//         if (result.length === 0) {
+//             console.log('Client not found');
+//             return res.status(404).json({ error: 'Client not found' });
+//         }
+
+//         const Client_ID = result[0].Client_ID;
+//         console.log('Client ID:', Client_ID);
+
+//         // Fetch bookings
+//         db.query(bookingsQuery, [Client_ID], (err, bookingsResults) => {
+//             if (err) {
+//                 console.error('Error fetching bookings:', err);
+//                 return res.status(500).json({ error: 'Failed to fetch bookings' });
+//             }
+
+//             // Fetch payments
+//             db.query(paymentsQuery, [Client_ID], (err, paymentsResults) => {
+//                 if (err) {
+//                     console.error('Error fetching payments:', err);
+//                     return res.status(500).json({ error: 'Failed to fetch payments' });
+//                 }
+
+//                 // Send response
+//                 res.json({
+//                     client: {
+//                         id: result[0].Client_ID,
+//                         name: result[0].Client_Name,
+//                         email: result[0].Client_Email,
+//                         contact: result[0].Client_ContactNumber,
+//                     },
+//                     bookings: bookingsResults.length > 0
+//                         ? bookingsResults.map((booking) => ({
+//                               id: booking.Booking_ID,
+//                               eventName: booking.Event_name,
+//                               hallName: booking.Hall_name,
+//                               date: booking.Booking_Date,
+//                               status: booking.Status,
+//                           }))
+//                         : [],
+//                     payments: paymentsResults.length > 0
+//                         ? paymentsResults.map((payment) => ({
+//                               id: payment.Payment_ID,
+//                               amount: payment.Amount,
+//                               date: payment.Payment_Date,
+//                               method: payment.Payment_Method,
+//                           }))
+//                         : [],
+//                 });
+//             });
+//         });
 //     });
 // });
 
-// const authenticateToken = (req, res, next) => {
-//     const token = req.headers['authorization'];
-//     if (!token) return res.sendStatus(401);
+// app.get('/api/client-details/:email',(req,res)=>{
+//     const Client_Email= req.params.email;
+//     console.log('Received request for email:', Client_Email);
+//     //first fetch the company name and id 
+//     //const nameidquery='select * from Clients where Client_Email=?';
+//     const nameidquery = `SELECT Client_ID, Client_Name, Client_Email, Client_ContactNumber FROM Clients WHERE Client_Email = ?`;
+//     const bookingsQuery = `SELECT Booking_ID, Event_name, Hall_name, Booking_Date, Status FROM Bookings WHERE Client_ID = ?`;
+//     const paymentsQuery = `SELECT Payment_ID, Amount, Payment_Date, Payment_Method FROM Payment WHERE Client_ID = ?`;
 
-//     jwt.verify(token, SECRET_KEY, (err, user) => {
-//         if (err) return res.sendStatus(403);
-//         req.user = user;
-//         next();
-//     });
-// };
+//     db.query(nameidquery,[Client_Email],(err,clientResults)=>{
+//         if(err){
+//             console.error('Error executing query:',err);
+//             return res.status(500).json({error: 'server error'});
+//         }
+//         console.log('Query Result:', clientResults);
+//         if(clientResults.length>0){
+//             Client_ID=clientResults[0].Client_ID;
+//             console.log("i ma cliendid",Client_ID);
+//             //------------------
+//             db.query(bookingsQuery, [Client_ID], (err, bookingsResults) => {
+//                 if (err) return res.status(500).send(err);
+    
+//                 db.query(paymentsQuery, [Client_ID], (err, paymentsResults) => {
+//                     if (err) return res.status(500).send(err);
+    
+//                     res.json({
+//                         client: {
+//                             id: clientResults[0].Client_ID,
+//                             name: clientResults[0].Client_Name,
+//                             email: clientResults[0].Client_Email,
+//                             contact: clientResults[0].Client_ContactNumber,
+//                         },
+//                         bookings: bookingsResults.map((booking) => ({
+//                             id: booking.Booking_ID,
+//                             eventName: booking.Event_name,
+//                             hallName: booking.Hall_name,
+//                             date: booking.Booking_Date,
+//                             status: booking.Status,
+//                         })),
+//                         payments: paymentsResults.map((payment) => ({
+//                             id: payment.Payment_ID,
+//                             amount: payment.Amount,
+//                             date: payment.Payment_Date,
+//                             method: payment.Payment_Method,
+//                         })),
+//                     });
+//                 });
+//             });
+//             ///-------------------
+//             console.log('Query Result:', clientResults);
+//         }
+//         else{
+//             return res.status(404).json({error: 'company not found'});
+//             console.log("not found");
+//         }
+//     })
+// })
