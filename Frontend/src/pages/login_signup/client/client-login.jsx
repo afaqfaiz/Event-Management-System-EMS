@@ -1,15 +1,33 @@
 // client-login.js
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import axios from 'axios';
 //import './client-login.css';
-
-function ClientLoginPage() {
-  const [clientName, setClientName] = useState('');
+//clientpagedetail
+const ClientLoginPage = () => {
+  const [clientEmail, setClientEmail] = useState('');
   const [clientPassword, setClientPassword] = useState('');
-
-  const handleSubmit = (e) => {
+  const [error,setError]=useState('');
+  const navigate = useNavigate(); 
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    try
+    {
+      const response=  await axios.post('http://localhost:5000/api/client/login', {
+        Client_Email: clientEmail,
+        Client_Password: clientPassword   
+      });
+      
+      localStorage.setItem('clientemail',clientEmail);
+
+      navigate('/clientpagedetail');
+
+    }
+    catch(err){
+        setError(err.response?.data?.message || 'Login failed. Please try again.')
+    }
     // Handle login logic here
-    console.log('Client Name:', clientName);
+    console.log('Client Emial:', clientEmail);
     console.log('Client Password:', clientPassword);
   };
 
@@ -18,12 +36,12 @@ function ClientLoginPage() {
       <h1>Client Login</h1>
       <form onSubmit={handleSubmit} className="login-form">
         <div className="form-group">
-          <label htmlFor="clientName">Client Name</label>
+          <label htmlFor="clientEmail">Client Name</label>
           <input
             type="text"
-            id="clientName"
-            value={clientName}
-            onChange={(e) => setClientName(e.target.value)}
+            id="clientEmail"
+            value={clientEmail}
+            onChange={(e) => setClientEmail(e.target.value)}
             required
           />
         </div>
@@ -37,6 +55,7 @@ function ClientLoginPage() {
             required
           />
         </div>
+        {error && <p style={{ color: 'red' }}>{error}</p>}
         <button type="submit">Login</button>
       </form>
     </div>

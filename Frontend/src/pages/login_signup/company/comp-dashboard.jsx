@@ -3,6 +3,7 @@ import axios from 'axios';
 import RegisterHall from './comp_hall_register';
 import HallList from './comp_halls_list';
 import { Navigate, useNavigate } from 'react-router-dom';
+import Navbar from './navbar';
 
 const CompanyDashboard = () => {
     const [company, setCompany] = useState(null); // State for company details
@@ -38,6 +39,7 @@ const CompanyDashboard = () => {
     return (
         <div>
             <h1>Welcome, {company.Company_Name}</h1>
+            <Navbar />
             <p>Email: {company.Company_Email}</p>
             <p>Address: {company.Company_Address}</p>
             <p>Contact: {company.Company_Contact}</p>

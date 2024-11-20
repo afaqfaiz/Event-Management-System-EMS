@@ -4,12 +4,12 @@ import Frontpage from './pages/login_signup/frontpage';
 import CompanyPage from './pages/login_signup/company/comp-front';
 import LoginPage from './pages/login_signup/company/comp-login';
 import RegisterCompanyPage from './pages/login_signup/company/comp-register';
-import Comppage from './pages/login_signup/company/comp-page';
+import Comppage from './pages/login_signup/company/comp-dashboard';
 
 import ClientPage from './pages/login_signup/client/client-front';
 import ClientLoginPage from './pages/login_signup/client/client-login';
 import RegisterClientPage from './pages/login_signup/client/client-register';
-
+import ClientDashboard from './pages/login_signup/client/client-dashboard';
 import './App.css';
 
 function App() {
@@ -24,6 +24,7 @@ function App() {
         <Route path="/clientlogin" element={<ClientLoginPage />} />
         <Route path="/clientregister" element={<RegisterClientPage />} />
         <Route path="/companypagedetail" element={<Comppage />} />
+        <Route path="/clientpagedetail" element={<ClientDashboard />} />
       </Routes>
     </Router>
   );
