@@ -12,10 +12,10 @@ const ClientDashboard = () => {
     const [bookings, setBookings] = useState([]);
     const [payments, setPayments] = useState([]);
     const navigate = useNavigate();
+    
 
     useEffect(() => {
         const clientemail = localStorage.getItem('clientemail');
-        console.log("wieu",clientemail);
         // Fetch client details
         const fetchClientData = async () => {
             try {

@@ -10,8 +10,10 @@ import ClientPage from './pages/login_signup/client/client-front';
 import ClientLoginPage from './pages/login_signup/client/client-login';
 import RegisterClientPage from './pages/login_signup/client/client-register';
 import ClientDashboard from './pages/login_signup/client/client-dashboard';
+import HallList from './pages/login_signup/client/hall-listing'
 import './App.css';
-
+import Payment from './pages/login_signup/client/payment'
+//clientpagedetail
 function App() {
   return (
     <Router>
@@ -25,6 +27,8 @@ function App() {
         <Route path="/clientregister" element={<RegisterClientPage />} />
         <Route path="/companypagedetail" element={<Comppage />} />
         <Route path="/clientpagedetail" element={<ClientDashboard />} />
+        <Route path="/clienthallList" element={<HallList />} />
+        <Route path="/payment" element={<Payment />} />
       </Routes>
     </Router>
   );

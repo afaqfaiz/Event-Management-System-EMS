@@ -5,8 +5,8 @@ const PaymentHistory = ({ payments }) => {
             {payments.length > 0 ? (
                 <ul>
                     {payments.map((payment) => (
-                        <li key={payment.Payment_ID}>
-                            Amount: {payment.Amount} | Date: {payment.Payment_Date} | Method: {payment.Payment_Method}
+                        <li key={payment.id}>
+                            Amount: {payment.amount} | Date: {payment.date} | Method: {payment.method}
                         </li>
                     ))}
                 </ul>
