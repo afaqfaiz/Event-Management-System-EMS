@@ -25,7 +25,7 @@ CREATE TABLE Events (
     Event_Description TEXT,
     Event_type VARCHAR(50),
     Event_date_time DATETIME,
-    Event_Duration TIME,
+    Event_Duration INT,
     Event_OrganizerName VARCHAR(100),
     Event_Attenders INT,
     FOREIGN KEY (Hall_ID) REFERENCES Hall(Hall_ID)

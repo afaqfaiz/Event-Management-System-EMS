@@ -7,6 +7,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+//const routes= require('./ClientRoutes/routes');
+
+//app.use('/api/postpayment',routes);
+
 const PORT = process.env.PORT || 5000;
 
 // Define routes here
@@ -147,7 +151,7 @@ app.get('/api/company/data/:email',(req,res)=>{
     })
 })
 
-//------------------- get the comapany halls by id
+//------------------- get the comapany halls by company id
 app.get('/api/company/halls/:id',(req,res)=>{
     const Company_ID=req.params.id;
     console.log('Received request for company id:', Company_ID);
@@ -240,7 +244,7 @@ app.post('/api/register/client', (req, res) => {
         clientAddress: Client_Address,
       clientPassword: Client_Password
      } = req.body;
- 
+     console.log(req.body);
     // Query to insert the new client user
     db.query(
         'INSERT INTO  Clients (Client_Name,Client_ContactNumber,Client_Email,Client_Address,Client_Password) VALUES (?, ?, ?,?,?)',
@@ -304,17 +308,25 @@ app.get('/api/client-details/:email', (req, res) => {
     const bookingsQuery = `
         SELECT 
             b.Booking_ID, 
+            b.Hall_ID, 
+            b.Client_ID, 
+            b.Company_ID, 
             b.Booking_Date, 
             b.Booking_StartDateTime, 
             b.Booking_EndDateTime, 
             b.Total_Cost, 
-            e.Event_name, 
-            e.Event_type, 
+            c.Client_Name, 
             h.Hall_name, 
-            h.Hall_location 
+            co.Company_Name,
+            CASE 
+                WHEN p.Payment_ID IS NOT NULL THEN 'Paid' 
+                ELSE 'Unpaid' 
+            END AS Payment_Status
         FROM Bookings b
-        JOIN Events e ON b.Event_ID = e.Event_ID
+        JOIN Clients c ON b.Client_ID = c.Client_ID
         JOIN Hall h ON b.Hall_ID = h.Hall_ID
+        JOIN Company co ON b.Company_ID = co.Company_ID
+        LEFT JOIN Payment p ON b.Booking_ID = p.Booking_ID
         WHERE b.Client_ID = ?`;
 
     const paymentsQuery = `
@@ -374,6 +386,7 @@ app.get('/api/client-details/:email', (req, res) => {
                         eventType: booking.Event_type,
                         hallName: booking.Hall_name,
                         hallLocation: booking.Hall_location,
+                        paymentstatus: booking.Payment_Status,
                     })),
                     payments: paymentsResults.map((payment) => ({
                         id: payment.Payment_ID,
@@ -388,131 +401,270 @@ app.get('/api/client-details/:email', (req, res) => {
 });
 
 
-// app.get('/api/client-details/:email', (req, res) => {
-//     const Client_Email = req.params.email;
-//     console.log('Received request for email:', Client_Email);
+////////////-----------------------------------------------------------------------------------------------------
 
-//     const nameidquery = `SELECT Client_ID, Client_Name, Client_Email, Client_ContactNumber 
-//                          FROM Clients WHERE Client_Email = ?`;
-//     const bookingsQuery = `SELECT Booking_ID, Event_name, Hall_name, Booking_Date, Status 
-//                            FROM Bookings WHERE Client_ID = ?`;
-//     const paymentsQuery = `SELECT Payment_ID, Amount, Payment_Date, Payment_Method 
-//                            FROM Payment WHERE Client_ID = ?`;
+app.get('/api/halls', (req, res) => {
+    const query = 'SELECT * FROM Hall';
+    db.query(query, (err, results) => {
+        if (err) return res.status(500).json({ error: 'Database error' });
+        res.json(results);
+    });
+});
 
-//     // Fetch client information
-//     db.query(nameidquery, [Client_Email], (err, result) => {
-//         if (err) {
-//             console.error('Error fetching client details:', err);
-//             return res.status(500).json({ error: 'Server error while fetching client details' });
-//         }
+//---------------------------booking and events 
+app.post('/api/bookings', async (req, res) => {
+    const {
+        hallId: Hall_ID,
+        clientId: Client_ID,
+        companyId: Company_ID,
+        bookingdate: Booking_Date,
+        startDateTime: Booking_StartDateTime,
+        endDateTime: Booking_EndDateTime,
+        totalCost: Total_Cost,
+        eventName: Event_name,
+        eventDescription: Event_Description,
+        eventType: Event_type,
+        startDateTime: Event_date_time,
+        eventduration: Event_Duration,
+        eventOrganizer: Event_OrganizerName,
+        eventAttendees: Event_Attenders,
+    } = req.body;
+    console.log('Received booking request:', req.body);
+    console.log("detail",Hall_ID,Client_ID,Company_ID,Booking_StartDateTime,Booking_EndDateTime,Total_Cost,Event_name)
+    // Step 1: Validate required fields
+    if (
+        !Hall_ID ||
+        !Client_ID ||
+        !Company_ID ||
+        !Booking_StartDateTime ||
+        !Booking_EndDateTime ||
+        !Total_Cost ||
+        !Event_name
+    ) {
+        console.error('Validation failed: Missing required fields');
+        return res.status(400).json({ error: 'All required fields must be provided' });
+    }
 
-//         if (result.length === 0) {
-//             console.log('Client not found');
-//             return res.status(404).json({ error: 'Client not found' });
-//         }
+    try {
+        // Step 2: Check for conflicting bookings
+        // console.log('Checking for conflicting bookings...');
+        // const checkQuery = `
+        //     SELECT * FROM Bookings 
+        //     WHERE Hall_ID = ? 
+        //     AND (
+        //         (Booking_StartDateTime <= ? AND Booking_EndDateTime >= ?) OR
+        //         (Booking_StartDateTime >= ? AND Booking_StartDateTime < ?)
+        //     );
+        // `;
+        // const checkParams = [Hall_ID, Booking_EndDateTime, Booking_StartDateTime, Booking_StartDateTime, Booking_EndDateTime];
 
-//         const Client_ID = result[0].Client_ID;
-//         console.log('Client ID:', Client_ID);
+        // const [existingBookings] = await db.promise().query(checkQuery, checkParams);
 
-//         // Fetch bookings
-//         db.query(bookingsQuery, [Client_ID], (err, bookingsResults) => {
-//             if (err) {
-//                 console.error('Error fetching bookings:', err);
-//                 return res.status(500).json({ error: 'Failed to fetch bookings' });
-//             }
+        // if (existingBookings.length > 0) {
+        //     console.error('Conflict found: Hall already booked for the selected time');
+        //     return res.status(409).json({ error: 'Hall is already booked for the selected time' });
+        // }
+        // console.log('No conflicting bookings found.');
 
-//             // Fetch payments
-//             db.query(paymentsQuery, [Client_ID], (err, paymentsResults) => {
-//                 if (err) {
-//                     console.error('Error fetching payments:', err);
-//                     return res.status(500).json({ error: 'Failed to fetch payments' });
-//                 }
+        // Step 3: Insert into Events table
+        console.log('Inserting event...');
+        const eventQuery = `
+            INSERT INTO Events (
+                Hall_ID, Event_name, Event_Description, Event_type, Event_date_time, 
+                Event_Duration, Event_OrganizerName, Event_Attenders
+            ) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        `;
+        const eventParams = [Hall_ID, Event_name, Event_Description, Event_type, Event_date_time, Event_Duration, Event_OrganizerName, Event_Attenders];
 
-//                 // Send response
-//                 res.json({
-//                     client: {
-//                         id: result[0].Client_ID,
-//                         name: result[0].Client_Name,
-//                         email: result[0].Client_Email,
-//                         contact: result[0].Client_ContactNumber,
-//                     },
-//                     bookings: bookingsResults.length > 0
-//                         ? bookingsResults.map((booking) => ({
-//                               id: booking.Booking_ID,
-//                               eventName: booking.Event_name,
-//                               hallName: booking.Hall_name,
-//                               date: booking.Booking_Date,
-//                               status: booking.Status,
-//                           }))
-//                         : [],
-//                     payments: paymentsResults.length > 0
-//                         ? paymentsResults.map((payment) => ({
-//                               id: payment.Payment_ID,
-//                               amount: payment.Amount,
-//                               date: payment.Payment_Date,
-//                               method: payment.Payment_Method,
-//                           }))
-//                         : [],
+        const [eventResult] = await db.promise().query(eventQuery, eventParams);
+        const Event_ID = eventResult.insertId;
+        console.log('Event inserted with ID:', Event_ID);
+
+        // Step 4: Insert into Bookings table
+        console.log('Inserting booking...');
+        const bookingQuery = `
+            INSERT INTO Bookings (
+                Event_ID, Hall_ID, Client_ID, Booking_Date, 
+                Booking_StartDateTime, Booking_EndDateTime, Company_ID, Total_Cost
+            ) 
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?);
+        `;
+        const bookingParams = [Event_ID, Hall_ID, Client_ID, Booking_Date, Booking_StartDateTime, Booking_EndDateTime, Company_ID, Total_Cost];
+
+        const [bookingResult] = await db.promise().query(bookingQuery, bookingParams);
+        console.log('Booking inserted with ID:', bookingResult.insertId);
+
+        // Step 5: Send success response
+        res.status(201).json({ message: 'Hall booked successfully' });
+    } catch (err) {
+        console.error('Error processing booking:', err);
+        res.status(500).json({ error: 'Failed to book hall' });
+    }
+});
+
+
+
+// app.post('/api/bookings', (req, res) => {
+//     const { hallId, clientId, startDateTime, endDateTime, companyId, totalCost, eventName, eventDescription, eventType, eventOrganizer, eventAttendees } = req.body;
+
+//     console.log(req.body);
+//     console.log("hallid",hallId)
+//     // Check for conflicts
+//     const checkQuery = `
+//         SELECT * 
+//         FROM Bookings 
+//         WHERE Hall_ID = ?
+//           AND (
+//               (Booking_StartDateTime < ? AND Booking_EndDateTime > ?)
+//               OR (Booking_StartDateTime < ? AND Booking_EndDateTime > ?)
+//           );
+//     `;
+//     db.query(checkQuery, [hallId, endDateTime, startDateTime, startDateTime, endDateTime], (err, results) => {
+//         if (err) return res.status(500).json({ error: 'Database error' });
+//         if (results.length > 0) return res.status(409).json({ error: 'Hall already booked for the selected time' });
+
+//         // Insert booking
+//         const bookingQuery = `
+//             INSERT INTO Bookings 
+//             (Hall_ID, Client_ID, Booking_Date, Booking_StartDateTime, Booking_EndDateTime, Company_ID, Total_Cost)
+//             VALUES (?, ?, NOW(), ?, ?, ?, ?);
+//         `;
+//         db.query(bookingQuery, [hallId, clientId, startDateTime, endDateTime, companyId, totalCost], (err, result) => {
+//             if (err) return res.status(500).json({ error: 'Database error' });
+
+//             // Insert event
+//             const eventQuery = `
+//                 INSERT INTO Events 
+//                 (Hall_ID, Event_name, Event_Description, Event_type, Event_date_time, Event_Duration, Event_OrganizerName, Event_Attenders)
+//                 VALUES (?, ?, ?, ?, ?, TIMEDIFF(?, ?), ?, ?);
+//             `;
+//             db.query(eventQuery, [hallId, eventName, eventDescription, eventType, startDateTime, endDateTime, eventOrganizer, eventAttendees], (err, eventResult) => {
+//                 if (err) return res.status(500).json({ error: 'Database error' });
+
+//                 // Update booking with event ID
+//                 const updateBooking = `
+//                     UPDATE Bookings 
+//                     SET Event_ID = ? 
+//                     WHERE Booking_ID = ?;
+//                 `;
+//                 db.query(updateBooking, [eventResult.insertId, result.insertId], (err) => {
+//                     if (err) return res.status(500).json({ error: 'Database error' });
+//                     res.json({ message: 'Booking and event created successfully' });
 //                 });
 //             });
 //         });
 //     });
 // });
 
-// app.get('/api/client-details/:email',(req,res)=>{
-//     const Client_Email= req.params.email;
-//     console.log('Received request for email:', Client_Email);
-//     //first fetch the company name and id 
-//     //const nameidquery='select * from Clients where Client_Email=?';
-//     const nameidquery = `SELECT Client_ID, Client_Name, Client_Email, Client_ContactNumber FROM Clients WHERE Client_Email = ?`;
-//     const bookingsQuery = `SELECT Booking_ID, Event_name, Hall_name, Booking_Date, Status FROM Bookings WHERE Client_ID = ?`;
-//     const paymentsQuery = `SELECT Payment_ID, Amount, Payment_Date, Payment_Method FROM Payment WHERE Client_ID = ?`;
+//---------------------------------------------testing booking and events
+//return all booking and events
+app.get('/api/bookingsdeatil', (req, res) => {
+    const query = `
+        SELECT 
+            b.Booking_ID, 
+            b.Hall_ID, 
+            b.Client_ID, 
+            b.Company_ID, 
+            b.Booking_Date, 
+            b.Booking_StartDateTime, 
+            b.Booking_EndDateTime, 
+            b.Total_Cost, 
+            c.Client_Name, 
+            h.Hall_name, 
+            co.Company_Name,
+            CASE 
+                WHEN p.Payment_ID IS NOT NULL THEN 'Paid' 
+                ELSE 'Unpaid' 
+            END AS Payment_Status
+        FROM Bookings b
+        JOIN Clients c ON b.Client_ID = c.Client_ID
+        JOIN Hall h ON b.Hall_ID = h.Hall_ID
+        JOIN Company co ON b.Company_ID = co.Company_ID
+        LEFT JOIN Payment p ON b.Booking_ID = p.Booking_ID;
+    `;
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching bookings:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        console.log('Booking_Date from DB:', results);
+        res.json(results);
+    });
+});
 
-//     db.query(nameidquery,[Client_Email],(err,clientResults)=>{
-//         if(err){
-//             console.error('Error executing query:',err);
-//             return res.status(500).json({error: 'server error'});
-//         }
-//         console.log('Query Result:', clientResults);
-//         if(clientResults.length>0){
-//             Client_ID=clientResults[0].Client_ID;
-//             console.log("i ma cliendid",Client_ID);
-//             //------------------
-//             db.query(bookingsQuery, [Client_ID], (err, bookingsResults) => {
-//                 if (err) return res.status(500).send(err);
-    
-//                 db.query(paymentsQuery, [Client_ID], (err, paymentsResults) => {
-//                     if (err) return res.status(500).send(err);
-    
-//                     res.json({
-//                         client: {
-//                             id: clientResults[0].Client_ID,
-//                             name: clientResults[0].Client_Name,
-//                             email: clientResults[0].Client_Email,
-//                             contact: clientResults[0].Client_ContactNumber,
-//                         },
-//                         bookings: bookingsResults.map((booking) => ({
-//                             id: booking.Booking_ID,
-//                             eventName: booking.Event_name,
-//                             hallName: booking.Hall_name,
-//                             date: booking.Booking_Date,
-//                             status: booking.Status,
-//                         })),
-//                         payments: paymentsResults.map((payment) => ({
-//                             id: payment.Payment_ID,
-//                             amount: payment.Amount,
-//                             date: payment.Payment_Date,
-//                             method: payment.Payment_Method,
-//                         })),
-//                     });
-//                 });
-//             });
-//             ///-------------------
-//             console.log('Query Result:', clientResults);
-//         }
-//         else{
-//             return res.status(404).json({error: 'company not found'});
-//             console.log("not found");
-//         }
-//     })
-// })
+app.get('/api/events', (req, res) => {
+    const query = `
+        SELECT 
+            e.Event_ID, 
+            e.Hall_ID, 
+            e.Event_name, 
+            e.Event_Description, 
+            e.Event_type, 
+            e.Event_date_time, 
+            e.Event_Duration, 
+            e.Event_OrganizerName, 
+            e.Event_Attenders, 
+            h.Hall_name
+        FROM Events e
+        JOIN Hall h ON e.Hall_ID = h.Hall_ID;
+    `;
+    db.query(query, (err, results) => {
+        if (err) {
+            console.error('Error fetching events:', err);
+            return res.status(500).json({ error: 'Database error' });
+        }
+        res.json(results);
+    });
+});
+
+//---------make payment
+
+
+app.post('/api/makepayment', (req, res) => {
+    const {
+        clientId: Client_ID,
+        Bookingid: Booking_ID,
+        bookingcost: Amount,
+        paymentmethod: Payment_Method,
+    } = req.body;
+
+    // Validate required fields first
+    if (!Client_ID || !Booking_ID || !Amount || !Payment_Method) {
+        console.log("Missing required fields.");
+        return res.status(400).json({ message: 'All fields are required.' });
+    }
+
+    console.log(req.body);
+
+    // Query to check if payment already exists
+    const checkPaymentQuery = `SELECT * FROM Payment WHERE Booking_ID = ?`;
+
+    db.query(checkPaymentQuery, [Booking_ID], (err, results) => {
+        if (err) {
+            console.error(err);
+            return res.status(500).json({ message: 'Database error during payment check.', error: err.message });
+        }
+
+        if (results.length > 0) {
+            // Payment already exists for the given Booking_ID
+            return res.status(400).json({ message: 'Payment already completed for this booking.' });
+        }
+
+        // Insert payment if no existing record is found
+        const sqlquery = `INSERT INTO Payment (Booking_ID, Client_ID, Amount, Payment_Date, Payment_Method) 
+                          VALUES (?, ?, ?, CURDATE(), ?)`;
+
+        db.query(sqlquery, [Booking_ID, Client_ID, Amount, Payment_Method], (err, result) => {
+            if (err) {
+                console.error(err);
+                return res.status(500).json({ message: 'Database error during payment insertion.', error: err.message });
+            }
+
+            res.status(201).json({
+                message: 'Payment created successfully!',
+                paymentId: result.insertId, // Optional: return the new Payment ID
+            });
+        });
+    });
+});
