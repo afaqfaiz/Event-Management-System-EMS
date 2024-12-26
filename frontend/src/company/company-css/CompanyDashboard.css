@@ -1,0 +1,50 @@
+/* Dashboard Container */
+.dashboard-container {
+  display: flex;
+  height: 100vh; /* Full viewport height */
+  overflow: hidden;
+  background-color: #f9f9f9;
+}
+
+/* Sidebar Styling */
+.sidebar-container {
+  width: 250px;
+  background-color: #2c3e50;
+  color: white;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  position: fixed;
+  left: 0;
+  top: 0;
+  bottom: 0;
+}
+
+/* Main Container */
+.main-container {
+  margin-left: 250px; /* Matches sidebar width */
+  display: flex;
+  flex-direction: column;
+  width: calc(100% - 250px);
+  height: 100vh;
+  overflow-y: auto;
+}
+
+/* Navbar Container */
+.navbar-container {
+  background-color: #34495e;
+  color: white;
+  padding: 10px 20px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+}
+
+/* Content Area */
+.content-container {
+  flex: 1;
+  padding: 20px;
+  background-color: #ecf0f1;
+}

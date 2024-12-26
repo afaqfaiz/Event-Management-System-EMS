@@ -1,0 +1,11 @@
+.client-profile {
+    display: flex;
+  }
+  
+  .content {
+    flex: 1;
+    margin-left: 220px;
+    padding: 20px;
+    background-color: #f9f9f9;
+  }
+  

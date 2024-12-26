@@ -1,0 +1,11 @@
+.hall-listing {
+    padding: 20px;
+  }
+  
+  .hall-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    justify-content: center;
+  }
+  
