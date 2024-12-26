@@ -1,15 +1,60 @@
+/* Navbar.css */
+
 .navbar {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    background-color: #007bff;
-    color: white;
-    padding: 10px 20px;
-  }
-  
-  .search-bar {
-    padding: 10px;
-    border-radius: 5px;
-    border: none;
-  }
-  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  background-color: #5790df;
+  color: #f1faee;
+  border-bottom: 4px solid #457b9d;
+}
+
+.admin-info {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.welcome-text {
+  font-size: 24px;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.admin-name {
+  font-size: 18px;
+  font-weight: 500;
+  margin: 5px 0;
+}
+
+.admin-email {
+  font-size: 14px;
+  color: #a8dadc;
+}
+
+.search-container {
+  width: 100%;
+  max-width: 400px;
+}
+
+.search-bar {
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 25px;
+  font-size: 16px;
+  background-color: #f1faee;
+  color: #1d3557;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  outline: none;
+  transition: box-shadow 0.3s, transform 0.3s;
+}
+
+.search-bar:focus {
+  box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+  transform: scale(1.05);
+}
+
+.search-bar::placeholder {
+  color: #457b9d;
+}
