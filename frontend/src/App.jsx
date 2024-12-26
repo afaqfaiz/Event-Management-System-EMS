@@ -16,7 +16,14 @@ const App = () => {
     <div>
       {/* <CompLoginPage/> */}
             <Routes>
-            <Route path='/' element={<CompDash/>} />
+            <Route path='/' element={<FrontPage/>} />
+            <Route path='/companylogin' element={<CompLoginPage/>} />
+            <Route path='/clientlogin' element={<ClientLogin/>} />
+            <Route path='/company/signup' element={<CompSignupPage/>} />
+            <Route path='/client/signup' element={<ClientRegister/>} />
+            <Route path='/company/dashboard' element={<CompDash/>} />
+
+
             <Route path='/update-hall' element={<Update/>}/>
             <Route path='add-hall' element={<Addhall/>} />
             <Route path='/edit-company' element={<Editcompany/>} />

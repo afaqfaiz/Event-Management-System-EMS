@@ -15,7 +15,6 @@ const CompLoginPage = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log(formData);
 
     try {
       const response = await fetch("http://localhost:5000/api/company/login", {
@@ -30,11 +29,12 @@ const CompLoginPage = () => {
 
       if (response.ok) {
         setError("");
-        setuser(data.user);
+        
+        setuser(data);
         localStorage.setItem("Token",data.token);
         alert("Login successful!");
         console.log("token",data.token)
-        navigate('/')
+        navigate('/company/dashboard')
       } else {
         setError(data.message || "Login failed");
       }
@@ -48,14 +48,14 @@ const CompLoginPage = () => {
       <h2 className="main-heading">Login to Your Account</h2>
       <form onSubmit={handleSubmit}>
         <label className="form-label" >
-          Email:
+          Company Email:
           <input
             className="email"
             type="email"
             name="email"
             value={formData.email}
             onChange={handleChange}
-            placeholder="Enter your email"
+            placeholder="Enter company email"
             required
           />
         </label>

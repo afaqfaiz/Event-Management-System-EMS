@@ -1,9 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoutPopup from './LogoutPopup.jsx';
+import { useAuthStore } from "../../store/useAuthStore";
 import '../company-css/Navbar.css';
 
 const Navbar = () => {
+  const user= useAuthStore();
+  console.log("user",user.user.companyName);
   const [showLogoutPopup, setShowLogoutPopup] = useState(false);
   const navigate = useNavigate();
 
@@ -15,11 +18,11 @@ const Navbar = () => {
     <div className="navbar">
       <div className="navbar-left">
         <img
-          src="company-logo.jpg"
+          src={user.user.companyImgUrl}
           alt="Company Logo"
           className="company-logo"
         />
-        <h2 className="company-name">Elegant Venues</h2>
+        <h2 className="company-name">{user.user.companyName}</h2>
       </div>
       <div className="navbar-right">
         <button

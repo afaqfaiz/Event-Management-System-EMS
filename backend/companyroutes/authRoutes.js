@@ -32,7 +32,11 @@ router.post('/login', async (req, res) => {
       message: 'Login successful',
       token,
       companyId: company.Company_ID,
-      companyName: company.Company_Name
+      companyName: company.Company_Name,
+      companyEmail:company.Company_Email,
+      companyAddress: company. Company_Address,
+      companyContact: company.Company_Contact,
+      companyImgUrl: company.Company_img_url,
     });
   });
 });

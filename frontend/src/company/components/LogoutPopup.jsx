@@ -1,10 +1,14 @@
 import React from 'react';
 import '../company-css/LogoutPopup.css';
-
+import { useNavigate } from 'react-router-dom';
+import { useAuthStore } from "../../store/useAuthStore";
 const LogoutPopup = ({ onClose }) => {
+  const navigate = useNavigate();
+   const {logout}=useAuthStore();
   const handleConfirmLogout = () => {
+    logout();
     alert('Logged out successfully!');
-    onClose();
+    navigate('/')
   };
 
   return (

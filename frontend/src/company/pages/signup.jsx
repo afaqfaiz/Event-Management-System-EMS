@@ -52,95 +52,97 @@ const SignupPage = () => {
   };
 
   return (
-    <div className="signup-page">
-      <h2 className="main-heading">Create Your Account</h2>
-      <form onSubmit={handleSubmit}>
-        <label>
-        Company Name:
-          <input
-            className="name"
-            type="text"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Enter your full name"
-            required
-          />
-        </label>
-        <label>
-        Company Owner:
-          <input
-            className="name"
-            type="text"
-            name="name"
-            value={formData.companyOwner}
-            onChange={handleChange}
-            placeholder="full owner name"
-            required
-          />
-        </label>
-        <label>
-        Company Email:
-          <input
-            className="email"
-            type="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="Enter your email"
-            required
-          />
-        </label>
-        <label>
-        Company Password:
-          <input
-            className="password"
-            type="password"
-            name="password"
-            value={formData.password}
-            onChange={handleChange}
-            placeholder="Create a password"
-            required
-          />
-        </label>
-        <label htmlFor=""> 
-        Company Contact
-        <input 
-            className="email"
-            type="text"
-            name="contact"
-            value={formData.contact}
-            onChange={handleChange}
-            placeholder="Contact" 
-            required />
-        </label>
-        <label htmlFor=""> 
-        Company Address
-        <input 
-            className="email"
-            type="text"
-            name="Address"
-            value={formData.Address}
-            onChange={handleChange}
-            placeholder="Address" 
-            required />
-        </label>
-        <label for="imgUrl"> 
-        Company Image/Logo URL:
-            <input className="email"
-                 type="text"
-                 name="imgurl"
-                 value={formData.imgurl}
-                 onChange={handleChange}
-                  placeholder="image url"
-                   required/>
-        </label>
-        {error && <p className="error">{error}</p>}
-        {msg && <p className="success">{msg}</p>}
-        <button type="submit" className="submit-button">
-          Sign Up
-        </button>
-      </form>
+    <div className="body-container">
+      <div className="signup-page">
+        <h2 className="main-heading">Create Your Account</h2>
+        <form onSubmit={handleSubmit}>
+          <label>
+          Company Name:
+            <input
+              className="name"
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Enter full company name"
+              required
+            />
+          </label>
+          <label>
+          Company Owner:
+            <input
+              className="name"
+              type="text"
+              name="name"
+              value={formData.companyOwner}
+              onChange={handleChange}
+              placeholder=" owner name"
+              required
+            />
+          </label>
+          <label>
+          Company Email:
+            <input
+              className="email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter company's email"
+              required
+            />
+          </label>
+          <label>
+          Company Password:
+            <input
+              className="password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Create a password"
+              required
+            />
+          </label>
+          <label htmlFor=""> 
+          Company Contact
+          <input 
+              className="email"
+              type="text"
+              name="contact"
+              value={formData.contact}
+              onChange={handleChange}
+              placeholder=" Company's Contact" 
+              required />
+          </label>
+          <label htmlFor=""> 
+          Company Address
+          <input 
+              className="email"
+              type="text"
+              name="Address"
+              value={formData.Address}
+              onChange={handleChange}
+              placeholder="Company's Address" 
+              required />
+          </label>
+          <label for="imgUrl"> 
+          Company Image/Logo URL:
+              <input className="email"
+                  type="text"
+                  name="imgurl"
+                  value={formData.imgurl}
+                  onChange={handleChange}
+                    placeholder="Company's image url"
+                    required/>
+          </label>
+          {error && <p className="error">{error}</p>}
+          {msg && <p className="success">{msg}</p>}
+          <button type="submit" className="submit-button">
+            Sign Up
+          </button>
+        </form>
+      </div>
     </div>
   );
 };
