@@ -1,0 +1,69 @@
+/* PaymentForm.css */
+.payment-form {
+    width: 400px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #fff;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+  }
+  
+  .payment-form h2 {
+    text-align: center;
+    color: #333;
+  }
+  
+  .payment-form form {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+  }
+  
+  .payment-form label {
+    font-size: 16px;
+    color: #333;
+  }
+  
+  .payment-form select,
+  .payment-form input {
+    padding: 10px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+  }
+  
+  .payment-form button {
+    padding: 10px;
+    font-size: 16px;
+    background-color: #4CAF50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+  }
+  
+  .payment-form button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
+  }
+  
+  .payment-form button:hover {
+    background-color: #45a049;
+  }
+  
+  .payment-form .error {
+    color: red;
+    text-align: center;
+  }
+  
+  .payment-form .success {
+    color: green;
+    text-align: center;
+  }
+  
+  input[readonly] {
+    background-color: #f5f5f5;
+    cursor: not-allowed;
+  }
+  

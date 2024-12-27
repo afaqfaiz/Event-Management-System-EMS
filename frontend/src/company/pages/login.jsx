@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import "../../client/client-css/login.css"
 import { useAuthStore } from "../../store/useAuthStore";
 import { useNavigate } from "react-router-dom";
+
 const CompLoginPage = () => {
   const {setuser}=useAuthStore();
   const navigate = useNavigate();
@@ -31,7 +32,7 @@ const CompLoginPage = () => {
         setError("");
         
         setuser(data);
-        localStorage.setItem("Token",data.token);
+        localStorage.setItem('Token',data.token);
         alert("Login successful!");
         console.log("token",data.token)
         navigate('/company/dashboard')

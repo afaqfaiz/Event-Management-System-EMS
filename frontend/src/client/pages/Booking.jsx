@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import '../client-css/Booking.css';
 import axios from 'axios';
+ import {useNavigate} from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 
 const Bookings = () => {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -36,6 +38,9 @@ const Bookings = () => {
     return <p className="error">{error}</p>;
   }
 
+  const handlepayment =  (booking) =>{
+     navigate('/client/paymentform',{ state:  booking });
+  }
   return (
     <div className="bookings">
       <h2>Bookings</h2>
@@ -54,9 +59,9 @@ const Bookings = () => {
             <p><strong>Payment:</strong> {booking.Payment_Status}</p>
             {booking.Payment_Status === 'Pending' && (
               <div>
-                <button className="btn pay-btn">Pay</button>
+                <button className="btn pay-btn" onClick={() => handlepayment(booking)} >Pay</button>
                 {new Date(booking.Event_Date) > today && (
-                  <button className="btn cancel-btn">Cancel</button>
+                  <button className="btn cancel-btn" >Cancel</button>
                 )}
               </div>
             )}

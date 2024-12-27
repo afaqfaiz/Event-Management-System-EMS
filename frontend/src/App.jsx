@@ -12,6 +12,8 @@ import Addhall from './company/pages/AddHall'
 import Update from './company/pages/UpdateHall'
 import Editcompany from './company/pages/companyEdit'
 import Viewhall from './company/components/Halls'
+import PaymentForm from './client/pages/paymentForm'
+import Bookings from './client/pages/Booking'
 const App = () => {
   return (
     <div>
@@ -30,7 +32,8 @@ const App = () => {
             
 
             <Route path='/client/dashboard' element={<ClientDash/>} />
-            
+            <Route path='/client/paymentform' element={<PaymentForm/>}/>
+            <Route path='/booking' element={<Bookings/>}/>
 
             <Route path='/company/signup' element={<CompSignupPage/>} />
              <Route path='/bookingform' element={<HallBooking/>} />
