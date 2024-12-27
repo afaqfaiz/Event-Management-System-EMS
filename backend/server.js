@@ -9,6 +9,7 @@ const clientRoutes = require('./clientroutes/client');
 const createclientbooking =require('./bookingRoute/clientbooking');
 const processPayment= require('./paymentRoutes/payment');
 const companybookingsRoute = require('./bookingRoute/companybooking');
+const companyPaymentRoute = require('./companyroutes/paymentRoutes');
 require('dotenv').config();
 
 
@@ -34,9 +35,10 @@ app.use('/api/client/bookings',createclientbooking);
 
 app.use('/api/payment',processPayment);
 
-
 app.use('/api/company/bookings', companybookingsRoute);
 
+app.use('/api/company/payment', companyPaymentRoute);
+//companyPaymentRoute
 // Connect to Database
 
 
