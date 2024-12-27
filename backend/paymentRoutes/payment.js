@@ -73,7 +73,6 @@ router.get('/history/:Client_ID', (req, res) => {
       console.error('Error fetching payment history:', err);
       return res.status(500).json({ error: 'Internal server error' });
     }
-    console.log(results);
     res.status(200).json(results);
   });
 });
