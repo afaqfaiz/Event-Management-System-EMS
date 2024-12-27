@@ -1,7 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import axios from 'axios';
 import '../company-css/add-updatehalls.css';
+import { useAuthStore } from "../../store/useAuthStore";
+import { useNavigate } from 'react-router-dom';
 
 const AddHall = ({ navigateToPage }) => {
+  const navigate = useNavigate();
+   const user= useAuthStore();
+   console.log(user.user.companyId);
+   const Id=user.user.companyId;
   const [formData, setFormData] = useState({
     name: '',
     location: '',
@@ -12,26 +19,40 @@ const AddHall = ({ navigateToPage }) => {
 
   const [error, setError] = useState('');
 
+  useEffect(() => {
+    setFormData((prev) => ({ ...prev, companyId: Id }));
+  }, [Id]);
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setFormData({ ...formData, [name]: value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    console.log(formData);
     if (
       !formData.name ||
       !formData.location ||
       !formData.capacity ||
       !formData.pricePerHour ||
-      !formData.rating
+      !formData.rating ||
+      !formData.companyId
     ) {
       setError('All fields are required.');
       return;
     }
-    // Assuming successful submission
-    alert('Hall added successfully!');
-    navigateToPage('halls');
+    try {
+      const response = await axios.post('http://localhost:5000/api/hall/addhalls', formData);
+      console.log(response.data); // Log the response from the API
+
+      // Assuming successful submission
+      alert('Hall added successfully!');
+      navigate('/company/dashboard');
+    } catch (err) {
+      console.error('Error adding hall:', err);
+      setError('There was an error adding the hall.');
+    }
   };
 
   return (

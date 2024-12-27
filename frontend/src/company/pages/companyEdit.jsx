@@ -1,13 +1,22 @@
 import React, { useState } from 'react';
 import '../company-css/CompanyEditPage.css';
+import { useLocation } from 'react-router-dom';
+import { useAuthStore } from "../../store/useAuthStore";
 
 const CompanyEditPage = () => {
+   const user= useAuthStore();
+   const data =user.user;
+
   const [companyDetails, setCompanyDetails] = useState({
-    name: 'Elegant Venues',
-    address: '123 Business Street, City',
-    email: 'contact@elegantvenues.com',
-    phone: '+1 234 567 890',
+    name: data.companyName,
+    address: data.companyAddress,
+    email: data.companyEmail,
+    phone: data.companyContact,
+    owner:data.companyOwner,
+    imgurl:data.companyImgUrl,
+    
   });
+  console.log("ata in edit",companyDetails);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -55,6 +64,24 @@ const CompanyEditPage = () => {
             type="text"
             name="phone"
             value={companyDetails.phone}
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Owner:
+          <input
+            type="text"
+            name="owner"
+            value={companyDetails.owner}
+            onChange={handleChange}
+          />
+        </label>
+        <label>
+          Image URL:
+          <input
+            type="text"
+            name="imgurl"
+            value={companyDetails.imgurl}
             onChange={handleChange}
           />
         </label>

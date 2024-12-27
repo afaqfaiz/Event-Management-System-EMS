@@ -11,7 +11,7 @@ const Navbar = () => {
   const navigate = useNavigate();
 
   const handleEditClick = () => {
-    navigate('/edit-company');
+    navigate('/company/edit');
   };
 
   return (

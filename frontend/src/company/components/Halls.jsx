@@ -43,12 +43,12 @@ const Halls = ({ navigateToPage }) => {
     setSelectedHall(hall);
   };
   const handleAddHall = () => {
-    navigate('/add-hall');
+    navigate('/company/addhall');
   }
 
   const handleEditHall = (hall) => {
     console.log("edit hall", hall)
-    navigate('/update-hall', { state: { hallData: hall } });
+    navigate('/company/updatehall', { state: { hallData: hall } });
   }
   return (
     <div className="halls-section">

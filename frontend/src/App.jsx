@@ -10,7 +10,8 @@ import CompLoginPage from './company/pages/login'
  import CompDash from './company/pages/CompanyDashboard'
 import Addhall from './company/pages/AddHall'
 import Update from './company/pages/UpdateHall'
-import Editcompany from './company/pages/companyEdit' 
+import Editcompany from './company/pages/companyEdit'
+import Viewhall from './company/components/Halls'
 const App = () => {
   return (
     <div>
@@ -22,11 +23,13 @@ const App = () => {
             <Route path='/company/signup' element={<CompSignupPage/>} />
             <Route path='/client/signup' element={<ClientRegister/>} />
             <Route path='/company/dashboard' element={<CompDash/>} />
+            <Route path='/company/halls' element={<Viewhall/>} />
+            <Route path='//company/edit' element={<Editcompany/>} />
+            <Route path='/company/addhall' element={<Addhall/>} />
+            <Route path='/company/updatehall' element={<Update/>}/>
+            
+            
 
-
-            <Route path='/update-hall' element={<Update/>}/>
-            <Route path='add-hall' element={<Addhall/>} />
-            <Route path='/edit-company' element={<Editcompany/>} />
             <Route path='/company/signup' element={<CompSignupPage/>} />
              <Route path='/bookingform' element={<HallBooking/>} />
              <Route path='/client' element={<ClientDash/>}/>
