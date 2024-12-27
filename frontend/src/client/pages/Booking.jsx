@@ -64,16 +64,18 @@ const Bookings = () => {
             <p><strong>Hall Name:</strong> {booking.Hall_name}</p>
             <p><strong>Company Name:</strong> {booking.Company_name}</p>
             <p><strong>Booking ID:</strong> {booking.Booking_ID}</p>
-            <p><strong>Event Date:</strong> {booking.Event_Date}</p>
+            <p><strong>Event Date:</strong> {new Date(booking.Event_Date).toLocaleDateString()} </p> {/*change*/}
             <p><strong>Start Time:</strong> {booking.Event_Start_Time}</p>
             <p><strong>Total Hours:</strong> {booking.Booking_Hours}</p>
             <p><strong>Hall Location:</strong> {booking.Hall_location}</p>
             <p><strong>Total Cost:</strong> ${booking.Total_Cost}</p>
             <p><strong>Status:</strong> {booking.Booking_Status}</p>
             <p><strong>Payment:</strong> {booking.Payment_Status}</p>
-            {booking.Payment_Status.trim().toLowerCase() === 'pending'  && (
+            {booking.Payment_Status.trim().toLowerCase() === 'pending' &&  (
               <div>
+                {booking.Booking_Status ==='Confirmed'  &&(
                 <button className="btn pay-btn" onClick={() => handlepayment(booking)} >Pay</button>
+                   )}
                 {new Date(booking.Event_Date) > today && (
                   <button className="btn cancel-btn" onClick={() => handleDelete(booking.Booking_ID)} >Cancel</button>
                 )}

@@ -1,40 +1,84 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../company-css/Bookings.css';
-
-const bookingsData = [
-  { id: 1, client: 'John Doe', hall: 'Grand Hall', status: 'Unpaid', approved: false },
-  { id: 2, client: 'Jane Smith', hall: 'Elegant Venue', status: 'Paid', approved: true },
-  { id: 3, client: 'Bob Johnson', hall: 'Skyline Banquet', status: 'Paid', approved: false },
-];
+import { useAuthStore } from '../../store/useAuthStore';
+import axios from 'axios';
 
 const Bookings = () => {
-  const [bookings, setBookings] = useState(bookingsData);
+  const user = useAuthStore();
+  const company_id = user.user.companyId;
 
-  const handleApprove = (id) => {
-    setBookings((prev) =>
-      prev.map((booking) =>
-        booking.id === id ? { ...booking, approved: true } : booking
-      )
-    );
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+
+  // Fetch bookings for the company
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/company/bookings/getByCompany/${company_id}`);
+        setBookings(response.data);
+        setLoading(false);
+      } catch (err) {
+        console.error('Error fetching bookings:', err);
+        setError('Failed to load bookings. Please try again later.');
+        setLoading(false);
+      }
+    };
+
+    fetchBookings();
+  }, [company_id]);
+
+  const handleApprove = async (bookingId) => {
+    try {
+      // Call API to approve booking
+      const response = await axios.put(`http://localhost:5000/api/company/bookings/approveBooking/${bookingId}`);
+      
+      // Update the local state if the booking is successfully approved
+      setBookings((prev) =>
+        prev.map((booking) =>
+          booking.Booking_ID === bookingId ? { ...booking, status: 'Confirmed' } : booking
+        )
+      );
+      alert(response.data.message); // Show success message
+    } catch (err) {
+      console.error('Error approving booking:', err);
+      setError('Failed to approve the booking.');
+    }
   };
+
+  if (loading) {
+    return <p>Loading bookings...</p>;
+  }
+
+  if (error) {
+    return <p className="error">{error}</p>;
+  }
 
   return (
     <div className="bookings">
       <h2>All Bookings</h2>
-      {bookings.map((booking) => (
-        <div key={booking.id} className="booking-card">
-          <p><strong>Client:</strong> {booking.client}</p>
-          <p><strong>Hall:</strong> {booking.hall}</p>
-          <p><strong>Status:</strong> {booking.status}</p>
-          <button
-            className={`btn ${booking.approved ? 'approved' : ''}`}
-            disabled={booking.approved}
-            onClick={() => handleApprove(booking.id)}
-          >
-            {booking.approved ? 'Approved' : 'Approve'}
-          </button>
-        </div>
-      ))}
+      {bookings.length > 0 ? (
+        bookings.map((booking) => (
+          <div key={booking.Booking_ID} className="booking-card">
+            <p><strong>Client: </strong> {booking.client}</p> 
+            <p><strong>Booking ID: </strong> {booking.Booking_ID}</p>
+            <p><strong>Hall: </strong> {booking.hall}</p>
+            <p><strong>Booking Status: </strong> {booking.status}</p>
+            <p><strong>Payment: </strong> {booking.paymentStatus}</p>
+            <p><strong>Event Date:: </strong>  {new Date(booking.eventDate).toLocaleDateString()}</p>
+
+            <button
+              className={`btn ${booking.status === 'Confirmed' ? 'approved' : ''}`}
+              disabled={booking.status === 'Confirmed'}
+              onClick={() => handleApprove(booking.Booking_ID)}
+            >
+              {booking.status === 'Confirmed' ? 'Approved' : 'Approve'}
+            </button>
+          </div>
+        ))
+      ) : (
+        <p>No bookings found.</p>
+      )}
     </div>
   );
 };
