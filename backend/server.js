@@ -6,6 +6,7 @@ const authRoutes = require('./companyroutes/authRoutes');
 const hallRoutes = require('./companyroutes/HallRoutes');
 const clientAuth = require('./clientroutes/clientauth');
 const clientRoutes = require('./clientroutes/client');
+const createclientbooking =require('./bookingRoute/clientbooking');
 require('dotenv').config();
 
 
@@ -26,6 +27,7 @@ app.use('/api/hall', hallRoutes);
 app.use('/api/client/auth', clientAuth);
 
 app.use('/api/client/hall',clientRoutes);
+app.use('/api/client/bookings',createclientbooking)
 
 // Connect to Database
 

@@ -30,3 +30,20 @@ CREATE TABLE Client (
     Client_Password VARCHAR(255)
 
 );
+
+CREATE TABLE Bookings (
+    Booking_ID INT PRIMARY KEY AUTO_INCREMENT, 
+    Hall_ID INT NOT NULL,
+    Client_ID INT NOT NULL,
+    Company_ID INT NOT NULL,
+    Booking_Date DATE DEFAULT CURRENT_DATE, -- Defaults to today's date
+    Event_Date DATE NOT NULL, 
+    Event_Start_Time TIME NOT NULL,
+    Booking_Hours INT CHECK (Booking_Hours > 0), -- Must be positive
+    Total_Cost DECIMAL(10, 2) CHECK (Total_Cost >= 0), -- Must be non-negative
+    Booking_Status ENUM('Pending', 'Confirmed', 'Cancelled') DEFAULT 'Pending', -- Status of the booking
+    Payment_Status ENUM('Pending', 'Paid') DEFAULT 'Pending', -- Status of payment
+    FOREIGN KEY (Hall_ID) REFERENCES Hall(Hall_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (Client_ID) REFERENCES Client(Client_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+    FOREIGN KEY (Company_ID) REFERENCES Company(Company_ID) ON DELETE CASCADE ON UPDATE CASCADE,
+);
