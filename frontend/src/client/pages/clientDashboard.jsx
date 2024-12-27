@@ -6,16 +6,18 @@ import Bookings from './Booking';
 import Payments from './Payment';
 import HallListing from './HallListing';
 import '../client-css/clientDashboard.css';
+import { useAuthStore } from "../../store/useAuthStore";
 
 const ClientProfile = () => {
+  const user =useAuthStore();
+  const data= user.user;
+ 
   const [section, setSection] = useState('profile');
 
   const clientDetails = {
-    email: 'client@example.com',
-    contact: '1234567890',
-    address: '123 Client St, City',
-    totalBookings: 5,
-    paymentPending: 2,
+    email: data.email,
+    contact: data.contact,
+    address: data.address,
   };
 
   const bookings = [

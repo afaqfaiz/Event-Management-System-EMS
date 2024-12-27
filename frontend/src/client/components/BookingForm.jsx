@@ -23,10 +23,10 @@ const BookingForm = ({ hall, onSubmit }) => {
 
   return (
     <div className="booking-form">
-      <h2>Book {hall.name}</h2>
-      <p><strong>Location:</strong> {hall.location}</p>
-      <p><strong>Price/Hour:</strong> ${hall.pricePerHour}</p>
-      <p><strong>Capacity:</strong> {hall.capacity}</p>
+      <h2>Book {hall.Hall_name}</h2>
+      <p><strong>Location:</strong> {hall.Hall_location}</p>
+      <p><strong>Price/Hour:</strong> ${hall.Price_per_Hour}</p>
+      <p><strong>Capacity:</strong> {hall.Hall_Capacity}</p>
       <form onSubmit={handleSubmit}>
         <label>
           Booking Date:

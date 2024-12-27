@@ -9,3 +9,31 @@
     justify-content: center;
   }
   
+  .search-bar {
+    margin: 20px 0;
+    text-align: center;
+  }
+  
+  .search-bar input {
+    width: 80%;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+  }
+  
+  .search-bar button {
+    width: 20%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #024d7f;
+    border-radius: 20px;
+    color:azure;
+    font-size:  20px;
+    font-weight: 200;
+  }
+
+  .search-bar button:hover {
+    background-color: #90bff5;
+    padding:12px;
+  }

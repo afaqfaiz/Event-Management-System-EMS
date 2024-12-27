@@ -1,7 +1,16 @@
 import React from 'react';
 import '../client-css/Navbar.css';
+import { useAuthStore } from "../../store/useAuthStore";
+import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({ name, onEdit, onLogout }) => {
+  const { logout } = useAuthStore();
+  const navigate = useNavigate();
+   onLogout =()=>{
+    logout();
+    alert('Logged out successfully!');
+    navigate('/')
+  }
   return (
     <div className="navbar">
       <div className="navbar-left">

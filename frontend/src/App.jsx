@@ -28,6 +28,8 @@ const App = () => {
             <Route path='/company/addhall' element={<Addhall/>} />
             <Route path='/company/updatehall' element={<Update/>}/>
             
+
+            <Route path='/client/dashboard' element={<ClientDash/>} />
             
 
             <Route path='/company/signup' element={<CompSignupPage/>} />

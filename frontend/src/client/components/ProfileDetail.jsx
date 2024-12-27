@@ -10,8 +10,6 @@ const Profile = ({ clientDetails }) => {
       <p><strong>Email:</strong> {email}</p>
       <p><strong>Contact:</strong> {contact}</p>
       <p><strong>Address:</strong> {address}</p>
-      <p><strong>Total Bookings:</strong> {totalBookings}</p>
-      <p><strong>Payment Pending:</strong> {paymentPending}</p>
     </div>
   );
 };

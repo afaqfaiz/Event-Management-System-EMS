@@ -18,7 +18,7 @@ const LoginPage = () => {
     console.log(formData);
 
     try {
-      const response = await fetch("http://localhost:5000/api/client/login", {
+      const response = await fetch("http://localhost:5000/api/client/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -30,11 +30,13 @@ const LoginPage = () => {
 
       if (response.ok) {
         setError("");
-        setuser(data.user);
+        const user = data.client;
+        setuser(user);
+        console.log("client",data.client);
         localStorage.setItem("Token",data.token);
         alert("Login successful!");
         console.log("token",data.token)
-        navigate('/')
+        navigate('/client/dashboard')
       } else {
         setError(data.message || "Login failed");
       }
