@@ -45,4 +45,37 @@ router.post('/processPayment', (req, res) => {
   });
 });
 
+router.get('/history/:Client_ID', (req, res) => {
+  const clientId = req.params.Client_ID;
+
+  const query = `
+    SELECT 
+      p.Payment_ID,
+      p.Amount,
+      p.Payment_Date AS date,
+      p.Payment_Method AS method,
+      b.Event_Date,
+      h.Hall_name AS Hall_Name
+    FROM 
+      Payment p
+    INNER JOIN 
+      Bookings b ON p.Booking_ID = b.Booking_ID
+    INNER JOIN 
+      Hall h ON b.Hall_ID = h.Hall_ID
+    WHERE 
+      p.Client_ID = ?
+    ORDER BY 
+      p.Payment_Date DESC
+  `;
+
+  connection.query(query, [clientId], (err, results) => {
+    if (err) {
+      console.error('Error fetching payment history:', err);
+      return res.status(500).json({ error: 'Internal server error' });
+    }
+    console.log(results);
+    res.status(200).json(results);
+  });
+});
+
 module.exports = router;
