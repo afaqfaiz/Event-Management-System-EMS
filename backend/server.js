@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const cors = require('cors');
 const { connectDB } = require('./db');
 const authRoutes = require('./companyroutes/authRoutes');
+const hallRoutes = require('./companyroutes/HallRoutes')
 require('dotenv').config();
 
 
@@ -17,9 +18,11 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // Routes
 app.use('/api/company', authRoutes);
 
+app.use('/api/hall', hallRoutes);
 
 // Connect to Database
 connectDB();
+
 
 // Start the Server
 app.listen(PORT, () => {

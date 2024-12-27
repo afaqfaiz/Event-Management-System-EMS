@@ -36,6 +36,7 @@ router.post('/login', async (req, res) => {
       companyEmail:company.Company_Email,
       companyAddress: company. Company_Address,
       companyContact: company.Company_Contact,
+      companyOwner: company.Company_Owner,
       companyImgUrl: company.Company_img_url,
     });
   });

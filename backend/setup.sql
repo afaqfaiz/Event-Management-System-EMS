@@ -8,3 +8,14 @@ CREATE TABLE Company (
     Company_img_url VARCHAR(10000),
     Company_password VARCHAR(100)
 );
+
+CREATE TABLE Hall (
+    Hall_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Company_ID INT NOT NULL,
+    Hall_name VARCHAR(100),
+    Hall_Capacity INT,
+    Hall_location VARCHAR(255),
+    Price_per_Hour DECIMAL(10, 2),
+    Hall_Rating  DECIMAL(3, 2)
+    FOREIGN KEY (Company_ID) REFERENCES Company(Company_ID) ON DELETE CASCADE
+);
