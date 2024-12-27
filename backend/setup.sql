@@ -19,3 +19,14 @@ CREATE TABLE Hall (
     Hall_Rating  DECIMAL(3, 2)
     FOREIGN KEY (Company_ID) REFERENCES Company(Company_ID) ON DELETE CASCADE
 );
+
+CREATE TABLE Client (
+    Client_ID INT PRIMARY KEY AUTO_INCREMENT,
+    Client_Name VARCHAR(100) UNIQUE NOT NULL,
+    Client_ContactNumber VARCHAR(15),
+    Client_Email VARCHAR(100),
+    Client_Address VARCHAR(255),
+    Client_img_url vARCHAR(1000),
+    Client_Password VARCHAR(255)
+
+);
