@@ -35,7 +35,7 @@ const ClientProfile = () => {
       case 'bookings':
         return <Bookings bookings={bookings} />;
       case 'payments':
-        return <Payments paymentHistory={paymentHistory} />;
+        return <Payments  />;
       case 'halllisting':
         return <HallListing  />;
       default:
