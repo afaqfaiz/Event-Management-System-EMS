@@ -1,24 +1,53 @@
 import React, { useState } from 'react';
+import axios from 'axios';
 import '../client-css/BookingForm.css';
+import { useAuthStore } from '../../store/useAuthStore';
 
 const BookingForm = ({ hall, onSubmit }) => {
+  const user = useAuthStore();
+  const Client_ID = user.user.clientId;
   const [bookingDate, setBookingDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [totalHours, setTotalHours] = useState('');
+  const [eventName, setEventName] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!bookingDate || !startTime || !totalHours) {
       setError('All fields are required.');
       return;
     }
+
     setError('');
-    setSuccess(true);
-    setTimeout(() => {
-      onSubmit();
-    }, 5000);
+    const totalCost = parseFloat(hall.Price_per_Hour) * parseInt(totalHours, 10);
+    const bookingData = {
+      Hall_ID: hall.Hall_ID,
+      Client_ID,
+      Company_ID: hall.Company_ID,
+      Booking_Date: new Date().toISOString().split('T')[0], // Today's date
+      Event_Date: bookingDate,
+      Event_Start_Time: startTime,
+      Booking_Hours: parseInt(totalHours, 10),
+      Total_Cost: totalCost,
+    };
+
+    try {
+      const response = await axios.post(
+        'http://localhost:5000/api/client/bookings/create',
+        bookingData
+      );
+      console.log(response.data);
+      setSuccess(true);
+      setTimeout(() => {
+        onSubmit();
+      }, 3000);
+    } catch (err) {
+      console.error(err);
+      setError('Failed to create booking. Please try again.');
+    }
   };
 
   return (
@@ -51,6 +80,14 @@ const BookingForm = ({ hall, onSubmit }) => {
             min="1"
             value={totalHours}
             onChange={(e) => setTotalHours(e.target.value)}
+          />
+        </label>
+        <label>
+          Event Name:
+          <input
+            type="text"
+            value={eventName}
+            onChange={(e) => setEventName(e.target.value)}
           />
         </label>
         <button type="submit" className="btn submit-btn">Submit</button>

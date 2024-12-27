@@ -9,7 +9,7 @@ const HallBooking = () => {
   const { hall } = location.state;
 
   const handleSuccess = () => {
-    navigate('/hall-listing');
+    navigate('/client/dashboard')
   };
 
   return (
