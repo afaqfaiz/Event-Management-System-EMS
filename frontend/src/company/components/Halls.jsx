@@ -1,55 +1,53 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import '../company-css/Halls.css';
 import {useNavigate} from "react-router-dom";
-const hallsData = [
-  {
-    id: 1,
-    name: 'Grand Banquet Hall',
-    location: 'Downtown City',
-    capacity: 500,
-    pricePerHour: 200,
-    rating: 4.5,
-  },
-  {
-    id: 2,
-    name: 'Elegant Conference Hall',
-    location: 'Uptown',
-    capacity: 300,
-    pricePerHour: 150,
-    rating: 4.2,
-  },
-  {
-    id: 3,
-    name: 'Royal Wedding Hall',
-    location: 'Central Park',
-    capacity: 700,
-    pricePerHour: 250,
-    rating: 4.8,
-  },
-];
-
+import axios from 'axios';
 
 const Halls = ({ navigateToPage }) => {
-    const navigate = useNavigate();
-  const [halls, setHalls] = useState(hallsData);
+  const navigate = useNavigate();
+  const [halls, setHalls] = useState([]); // Initialize state to hold the list of halls
   const [selectedHall, setSelectedHall] = useState(null);
+  const companyId = 1; // You can get the companyId from your auth store or context
 
-  const handleDelete = (id) => {
-    setHalls((prevHalls) => prevHalls.filter((hall) => hall.id !== id));
-    setSelectedHall(null);
+  // Fetch halls when the component mounts
+  useEffect(() => {
+    const fetchHalls = async () => {
+      try {
+        const response = await axios.get(`http://localhost:5000/api/hall/gethalls/${companyId}`);
+        setHalls(response.data);
+        console.log(response.data);
+      } catch (error) {
+        console.error('Error fetching halls:', error);
+      }
+    };
+
+    fetchHalls();
+  }, []); // Only run this effect when companyId changes
+
+  const handleDelete = async () => {
+    try {
+      // Call your API to delete the hall
+      await axios.delete(`http://localhost:5000/api/hall/deletehalls/${selectedHall}`);
+      setSelectedHall(null);
+      navigate('/company/dashboard')
+    } catch (error) {
+      console.error('Error deleting hall:', error);
+    }
   };
 
-  const confirmDelete = (hall) => {
-    setSelectedHall(hall);
+  const confirmDelete = (id) => {
+    setSelectedHall(id);
   };
+
   const handleAddHall = () => {
     navigate('/company/addhall');
-  }
+  };
 
   const handleEditHall = (hall) => {
-    console.log("edit hall", hall)
+    console.log("edit hall", hall);
     navigate('/company/updatehall', { state: { hallData: hall } });
-  }
+  };
+
   return (
     <div className="halls-section">
       <div className="halls-header">
@@ -63,12 +61,12 @@ const Halls = ({ navigateToPage }) => {
       </div>
       <div className="halls-list">
         {halls.map((hall) => (
-          <div key={hall.id} className="hall-card">
-            <h3>{hall.name}</h3>
-            <p>Location: {hall.location}</p>
-            <p>Capacity: {hall.capacity}</p>
-            <p>Price/Hour: ${hall.pricePerHour}</p>
-            <p>Rating: {hall.rating} ★</p>
+          <div key={hall.Hall_ID} className="hall-card">
+            <h3>{hall. Hall_name}</h3>
+            <p>Location: {hall.Hall_location}</p>
+            <p>Capacity: {hall.Hall_Capacity}</p>
+            <p>Price/Hour: ${hall.Price_per_Hour}</p>
+            <p>Rating: {hall.Hall_Rating} ★</p>
             <div className="hall-card-actions">
               <button
                 className="btn update-btn"
@@ -78,7 +76,7 @@ const Halls = ({ navigateToPage }) => {
               </button>
               <button
                 className="btn delete-btn"
-                onClick={() => confirmDelete(hall)}
+                onClick={() => confirmDelete(hall.Hall_ID)}
               >
                 Delete
               </button>
@@ -95,10 +93,11 @@ const Halls = ({ navigateToPage }) => {
             </p>
             <button
               className="btn confirm-btn"
-              onClick={() => handleDelete(selectedHall.id)}
+              onClick={() => handleDelete()}
             >
               Confirm Delete
             </button>
+
             <button
               className="btn cancel-btn"
               onClick={() => setSelectedHall(null)}
