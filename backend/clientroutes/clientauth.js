@@ -9,9 +9,9 @@ require('dotenv').config();
 
 // Client Registration API
 router.post("/signup", async (req, res) => {
-    console.log("in sign");
-    const { name, email, password, contact, Address, imgurl } = req.body;
-  
+    const { name, email, password, contact, address, imgurl } = req.body;
+    //name, email, password, contact, Address, imgurl
+    const Address =address;
     // Check if all required fields are provided
     if (!name || !email || !password || !contact || !Address || !imgurl) {
       return res.status(400).json({ message: "All fields are required." });

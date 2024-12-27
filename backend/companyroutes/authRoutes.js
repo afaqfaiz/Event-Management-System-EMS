@@ -81,10 +81,16 @@ router.post('/login', async (req, res) => {
 
 // Route for user signup
 router.post('/signup', async (req, res) => {
-  const { companyName, companyContact, companyEmail, companyAddress, companyOwner, companyPassword, companyImgUrl } = req.body;
-
+  const { name, contact, email, Address, companyOwner, password, imgurl } = req.body;
+const companyName=name;
+const companyContact=contact;
+const companyEmail=email;
+const companyAddress=Address;
+// const companyOwner=companyOwner;
+const companyPassword=password;
+const companyImgUrl=imgurl;
   // Validate required fields
-  if (!companyName || !companyEmail || !companyPassword) {
+  if (!companyContact ||!companyAddress || !companyOwner || !companyImgUrl || !companyName || !companyEmail || !companyPassword) {
     return res.status(400).json({ message: 'Please provide all required fields' });
   }
 
