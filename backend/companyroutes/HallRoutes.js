@@ -48,9 +48,9 @@ router.post('/addhalls', (req, res) => {
   });
   
 // Update Hall (Except hall_rating)
-router.put('/updatehalls/:id', (req, res) => {
-  const hallId = req.params.id;
-  const { hallName, hallCapacity, hallLocation, pricePerHour } = req.body;
+router.put('/updatehalls', (req, res) => {
+  //const hallId = req.params.id;
+  const { hallId,hallName, hallCapacity, hallLocation, pricePerHour } = req.body;
 
   // Validate input
   if (!hallName || !hallCapacity || !hallLocation || !pricePerHour) {
