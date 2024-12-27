@@ -5,6 +5,43 @@ const { connection } = require('../db'); // Import the DB connection
 const router = express.Router();
 require('dotenv').config();
 
+
+// Update company details API
+router.put('/updatecompany', (req, res) => {
+  const { companyId, name, address, email, phone, owner, imgurl } = req.body;
+
+  // Validate required fields
+  if (!companyId || !name || !address || !email || !phone || !owner || !imgurl) {
+    return res.status(400).json({ message: 'All fields are required.' });
+  }
+
+  // Query to update company details
+  const query = `UPDATE Company SET 
+    Company_name = ?, 
+    Company_address = ?, 
+    Company_email = ?, 
+    Company_Contact = ?, 
+    Company_Owner = ?, 
+    Company_img_url = ? 
+    WHERE Company_ID = ?`;
+
+  const values = [name, address, email, phone, owner, imgurl, companyId];
+
+  connection.query(query, values, (err, result) => {
+    if (err) {
+      console.error(err);
+      return res.status(500).json({ message: 'Database error.' });
+    }
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Company not found.' });
+    }
+
+    res.status(200).json({ message: 'Company details updated successfully!' });
+  });
+});
+
+
 // Route for user login
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
