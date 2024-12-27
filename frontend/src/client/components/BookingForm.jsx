@@ -9,7 +9,6 @@ const BookingForm = ({ hall, onSubmit }) => {
   const [bookingDate, setBookingDate] = useState('');
   const [startTime, setStartTime] = useState('');
   const [totalHours, setTotalHours] = useState('');
-  const [eventName, setEventName] = useState('');
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
 
@@ -80,14 +79,6 @@ const BookingForm = ({ hall, onSubmit }) => {
             min="1"
             value={totalHours}
             onChange={(e) => setTotalHours(e.target.value)}
-          />
-        </label>
-        <label>
-          Event Name:
-          <input
-            type="text"
-            value={eventName}
-            onChange={(e) => setEventName(e.target.value)}
           />
         </label>
         <button type="submit" className="btn submit-btn">Submit</button>

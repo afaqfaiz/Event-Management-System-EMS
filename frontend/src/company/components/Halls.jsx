@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import '../company-css/Halls.css';
 import {useNavigate} from "react-router-dom";
+import { useAuthStore } from '../../store/useAuthStore';
 import axios from 'axios';
 
 const Halls = ({ navigateToPage }) => {
+  const user = useAuthStore();
+  const companyId = user.user.companyId;
   const navigate = useNavigate();
   const [halls, setHalls] = useState([]); // Initialize state to hold the list of halls
   const [selectedHall, setSelectedHall] = useState(null);
-  const companyId = 1; // You can get the companyId from your auth store or context
+  //const companyId = 1; // You can get the companyId from your auth store or context
 
   // Fetch halls when the component mounts
   useEffect(() => {

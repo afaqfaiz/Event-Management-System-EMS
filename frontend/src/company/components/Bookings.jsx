@@ -6,6 +6,7 @@ import axios from 'axios';
 const Bookings = () => {
   const user = useAuthStore();
   const company_id = user.user.companyId;
+ 
 
   const [bookings, setBookings] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -81,9 +82,13 @@ const Bookings = () => {
             <p><strong>Client: </strong> {booking.client}</p> 
             <p><strong>Booking ID: </strong> {booking.Booking_ID}</p>
             <p><strong>Hall: </strong> {booking.hall}</p>
+            <p><strong>Event Date: </strong> {new Date(booking.eventDate).toLocaleDateString()}</p>
+            <p><strong>Event Start Time: </strong> {booking.eventStartTime}</p>
+            <p><strong>Booking Hours: </strong> {booking.bookingHours} hr</p>
+            <p><strong>Booking Date: </strong>{new Date(booking.bookingDate).toLocaleDateString()}</p>
             <p><strong>Booking Status: </strong> {booking.status}</p>
             <p><strong>Payment: </strong> {booking.paymentStatus}</p>
-            <p><strong>Event Date:: </strong> {new Date(booking.eventDate).toLocaleDateString()}</p>
+           
 
             {booking.status !== 'Cancelled' && (
             <button
