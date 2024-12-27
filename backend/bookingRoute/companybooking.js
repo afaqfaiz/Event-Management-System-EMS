@@ -6,19 +6,22 @@ router.get('/getByCompany/:companyId', (req, res) => {
     const companyId = req.params.companyId;
   
     const query = `
-      SELECT 
-      b.Booking_ID, 
-      c.Client_Name as client, 
-      h.Hall_name as hall, 
-      b.Booking_Status as status, 
-      b.Payment_Status as paymentStatus,  -- This is from the Bookings table
-      b.Event_Date as eventDate,
-      b.Total_Cost as totalCost
-    FROM Bookings b
-    JOIN Client c ON b.Client_ID = c.Client_ID
-    JOIN Hall h ON b.Hall_ID = h.Hall_ID
-    WHERE b.Company_ID = ?;
-  `;
+        SELECT 
+        b.Booking_ID, 
+        c.Client_Name as client, 
+        h.Hall_name as hall, 
+        b.Booking_Status as status, 
+        b.Payment_Status as paymentStatus, 
+        b.Event_Date as eventDate, 
+        b.Booking_Date as bookingDate,         -- Added Booking_Date
+        b.Event_Start_Time as eventStartTime,  -- Added Event_Start_Time
+        b.Booking_Hours as bookingHours,      -- Added Booking_Hours
+        b.Total_Cost as totalCost
+      FROM Bookings b
+      JOIN Client c ON b.Client_ID = c.Client_ID
+      JOIN Hall h ON b.Hall_ID = h.Hall_ID
+      WHERE b.Company_ID = ?;
+    `;
     connection.query(query, [companyId], (err, results) => {
       if (err) {
         console.error('Error fetching bookings:', err);
