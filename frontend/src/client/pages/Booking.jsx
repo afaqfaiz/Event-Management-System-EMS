@@ -28,7 +28,7 @@ const Bookings = () => {
     };
 
     fetchBookings();
-  }, [Client_ID]);
+  }, []);
 
   if (loading) {
     return <p>Loading bookings...</p>;
@@ -37,6 +37,20 @@ const Bookings = () => {
   if (error) {
     return <p className="error">{error}</p>;
   }
+
+
+  const handleDelete = async (bookingId) => {
+    try {
+      const response = await axios.delete(`http://localhost:5000/api/client/bookings/delete/${bookingId}`);
+      if (response.status === 200) {
+        alert('Booking Canceled successfully!');
+        setBookings(bookings.filter((booking) => booking.Booking_ID !== bookingId)); // Update state to remove the deleted booking
+      }
+    } catch (error) {
+      console.error('Error Canceling booking:', error);
+      alert('Failed to Cancel the booking. Please try again.');
+    }
+  };
 
   const handlepayment =  (booking) =>{
      navigate('/client/paymentform',{ state:  booking });
@@ -57,11 +71,11 @@ const Bookings = () => {
             <p><strong>Total Cost:</strong> ${booking.Total_Cost}</p>
             <p><strong>Status:</strong> {booking.Booking_Status}</p>
             <p><strong>Payment:</strong> {booking.Payment_Status}</p>
-            {booking.Payment_Status === 'Pending' && (
+            {booking.Payment_Status.trim().toLowerCase() === 'pending'  && (
               <div>
                 <button className="btn pay-btn" onClick={() => handlepayment(booking)} >Pay</button>
                 {new Date(booking.Event_Date) > today && (
-                  <button className="btn cancel-btn" >Cancel</button>
+                  <button className="btn cancel-btn" onClick={() => handleDelete(booking.Booking_ID)} >Cancel</button>
                 )}
               </div>
             )}
