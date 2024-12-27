@@ -55,5 +55,31 @@ router.get('/getByCompany/:companyId', (req, res) => {
       return res.status(200).json({ message: 'Booking approved successfully' });
     });
   });
+
+  router.put('/cancelBooking/:bookingId', (req, res) => {
+    const { bookingId } = req.params;
+  
+    // SQL query to update the booking status to 'Cancelled'
+    const cancelBookingQuery = `
+      UPDATE Bookings
+      SET Booking_Status = 'Cancelled'
+      WHERE Booking_ID = ?
+    `;
+  
+    connection.query(cancelBookingQuery, [bookingId], (err, results) => {
+      if (err) {
+        console.error('Error updating booking status:', err);
+        return res.status(500).json({ message: 'Failed to cancel the booking.' });
+      }
+  
+      // Check if the booking was found and updated
+      if (results.affectedRows === 0) {
+        return res.status(404).json({ message: 'Booking not found.' });
+      }
+  
+      return res.json({ message: 'Booking successfully cancelled.' });
+    });
+  });
+  
   
   module.exports = router;
