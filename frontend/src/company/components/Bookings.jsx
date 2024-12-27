@@ -46,6 +46,24 @@ const Bookings = () => {
     }
   };
 
+  const handleCancel = async (bookingId) => {
+    try {
+      // Call API to cancel booking
+      const response = await axios.put(`http://localhost:5000/api/company/bookings/cancelBooking/${bookingId}`);
+
+      // Update the local state if the booking is successfully cancelled
+      setBookings((prev) =>
+        prev.map((booking) =>
+          booking.Booking_ID === bookingId ? { ...booking, status: 'Cancelled' } : booking
+        )
+      );
+      alert(response.data.message); // Show success message
+    } catch (err) {
+      console.error('Error cancelling booking:', err);
+      setError('Failed to cancel the booking.');
+    }
+  };
+
   if (loading) {
     return <p>Loading bookings...</p>;
   }
@@ -65,8 +83,9 @@ const Bookings = () => {
             <p><strong>Hall: </strong> {booking.hall}</p>
             <p><strong>Booking Status: </strong> {booking.status}</p>
             <p><strong>Payment: </strong> {booking.paymentStatus}</p>
-            <p><strong>Event Date:: </strong>  {new Date(booking.eventDate).toLocaleDateString()}</p>
+            <p><strong>Event Date:: </strong> {new Date(booking.eventDate).toLocaleDateString()}</p>
 
+            {booking.status !== 'Cancelled' && (
             <button
               className={`btn ${booking.status === 'Confirmed' ? 'approved' : ''}`}
               disabled={booking.status === 'Confirmed'}
@@ -74,6 +93,17 @@ const Bookings = () => {
             >
               {booking.status === 'Confirmed' ? 'Approved' : 'Approve'}
             </button>
+            )}
+
+            {booking.status !== 'Confirmed' && (
+              <button
+                className="btn cancel-btn"
+                disabled={booking.status === 'Cancelled'}
+                onClick={() => handleCancel(booking.Booking_ID)}
+              >
+                {booking.status === 'Cancelled' ? 'Cancelled' : 'Cancell'}
+              </button>
+            )}
           </div>
         ))
       ) : (
