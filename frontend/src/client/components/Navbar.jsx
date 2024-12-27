@@ -5,6 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 const Navbar = ({ name, onEdit, onLogout }) => {
   const { logout } = useAuthStore();
+  const user = useAuthStore();
+  const clientname=user.user.name;
+  console.log(user.user);
   const navigate = useNavigate();
    onLogout =()=>{
     logout();
@@ -15,7 +18,7 @@ const Navbar = ({ name, onEdit, onLogout }) => {
     <div className="navbar">
       <div className="navbar-left">
         <img src="profile-pic.jpg" alt="Profile" className="profile-img" />
-        <span className="profile-name">{name}</span>
+        <span className="profile-name">{clientname}</span>
       </div>
       <div className="navbar-right">
         <button className="btn edit-btn" onClick={onEdit}>Edit</button>

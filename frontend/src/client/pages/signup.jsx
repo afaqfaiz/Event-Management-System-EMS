@@ -9,7 +9,7 @@ const SignupPage = () => {
     email: "",
     password: "",
     contact: "",
-    Address: "",
+    address: "",
     imgurl: "",
   });
   const [error, setError] = useState("");
@@ -24,7 +24,7 @@ const SignupPage = () => {
     e.preventDefault();
 
     try {
-      const response = await fetch("http://localhost:5000/api/register/client", {
+      const response = await fetch("http://localhost:5000/api/client/auth/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -38,7 +38,7 @@ const SignupPage = () => {
         setError("");
         setMsg("Client registered successfully!");
         alert("Signup successful!");
-        navigate("/login");
+        navigate("/clientlogin");
       } else {
         setMsg("");
         setError(data.message || "Signup failed");
@@ -54,11 +54,10 @@ const SignupPage = () => {
       <div className="signup-page">
         <h2 className="main-heading">Create Your Account</h2>
         <form onSubmit={handleSubmit}>
-          {/* Form fields */}
           <label>
             Name:
             <input
-              className="name"
+              className="input-name"
               type="text"
               name="name"
               value={formData.name}
@@ -67,7 +66,66 @@ const SignupPage = () => {
               required
             />
           </label>
-          {/* Other form fields */}
+          <label>
+            Email:
+            <input
+              className="input-email"
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="Enter your email"
+              required
+            />
+          </label>
+          <label>
+            Password:
+            <input
+              className="input-password"
+              type="password"
+              name="password"
+              value={formData.password}
+              onChange={handleChange}
+              placeholder="Create a password"
+              required
+            />
+          </label>
+          <label>
+            Contact:
+            <input
+              className="input-contact"
+              type="text"
+              name="contact"
+              value={formData.contact}
+              onChange={handleChange}
+              placeholder="Enter your contact number"
+              required
+            />
+          </label>
+          <label>
+            Address:
+            <input
+              className="input-address"
+              type="text"
+              name="address"
+              value={formData.address}
+              onChange={handleChange}
+              placeholder="Enter your address"
+              required
+            />
+          </label>
+          <label>
+            Image URL:
+            <input
+              className="input-imgurl"
+              type="text"
+              name="imgurl"
+              value={formData.imgurl}
+              onChange={handleChange}
+              placeholder="Enter the image URL"
+              required
+            />
+          </label>
           {error && <p className="error">{error}</p>}
           {msg && <p className="success">{msg}</p>}
           <button type="submit" className="submit-button">

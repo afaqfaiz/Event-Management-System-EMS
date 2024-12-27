@@ -25,7 +25,7 @@ const SignupPage = () => {
     console.log(formData);
 
     try {
-      const response = await fetch("http://localhost:5000/api/company/register", {
+      const response = await fetch("http://localhost:5000/api/company/signup", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -40,7 +40,7 @@ const SignupPage = () => {
         setmsg("Client registered Successfully")
 
         alert("Signup successful!");
-        navigate('/login')
+        navigate('/companylogin')
       } else {
         setmsg("");
         setError(data.message || "Signup failed");
@@ -73,7 +73,7 @@ const SignupPage = () => {
             <input
               className="name"
               type="text"
-              name="name"
+              name="companyOwner"
               value={formData.companyOwner}
               onChange={handleChange}
               placeholder=" owner name"
