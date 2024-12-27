@@ -56,6 +56,6 @@ CREATE TABLE Payment (
     Amount DECIMAL(10, 2),
     Payment_Date DATE,
     Payment_Method VARCHAR(50),
-    FOREIGN KEY (Booking_ID) REFERENCES Bookings(Booking_ID),
-    FOREIGN KEY (Client_ID) REFERENCES Client(Client_ID)
+    FOREIGN KEY (Booking_ID) REFERENCES Bookings(Booking_ID)  ON DELETE CASCADE,
+    FOREIGN KEY (Client_ID) REFERENCES Client(Client_ID)  ON DELETE CASCADE
 );

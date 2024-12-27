@@ -30,7 +30,7 @@ router.post('/processPayment', (req, res) => {
     // Step 2: Update the Booking_Status to 'Confirmed'
     const bookingUpdateQuery = `
       UPDATE Bookings
-      SET Booking_Status = 'Confirmed'
+      SET Payment_Status = 'Paid'
       WHERE Booking_ID = ?
     `;
 
