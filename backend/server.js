@@ -10,6 +10,7 @@ const createclientbooking =require('./bookingRoute/clientbooking');
 const processPayment= require('./paymentRoutes/payment');
 const companybookingsRoute = require('./bookingRoute/companybooking');
 const companyPaymentRoute = require('./companyroutes/paymentRoutes');
+const adminauthRoutes =require('./adminRoutes/adminauth');
 require('dotenv').config();
 
 
@@ -38,6 +39,8 @@ app.use('/api/payment',processPayment);
 app.use('/api/company/bookings', companybookingsRoute);
 
 app.use('/api/company/payment', companyPaymentRoute);
+
+app.use('/api/admin/auth',adminauthRoutes)
 //companyPaymentRoute
 // Connect to Database
 

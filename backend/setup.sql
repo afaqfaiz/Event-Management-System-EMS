@@ -59,3 +59,14 @@ CREATE TABLE Payment (
     FOREIGN KEY (Booking_ID) REFERENCES Bookings(Booking_ID)  ON DELETE CASCADE,
     FOREIGN KEY (Client_ID) REFERENCES Client(Client_ID)  ON DELETE CASCADE
 );
+
+CREATE TABLE admin (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(100) NOT NULL,
+    email VARCHAR(100) UNIQUE NOT NULL,
+    password VARCHAR(255) NOT NULL,
+    role ENUM('superadmin', 'admin' ) NOT NULL DEFAULT 'admin'
+);
+
+INSERT INTO admin (name, email, password, role) 
+VALUES ('u can use any name', 'can use any email', 'use bcrypt password with 10 round', 'superadmin');
