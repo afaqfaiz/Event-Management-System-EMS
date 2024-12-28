@@ -1,49 +1,56 @@
 const express = require('express');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { connection } = require('../db'); // Your existing db file
+const { connection } = require('../db');
+const router = express.Router();
 require('dotenv').config();
 
-const router = express.Router();
+
 
 // Admin Login API
 router.post('/login', (req, res) => {
   const { email, password } = req.body;
+  console.log("in login");
 
-  // Validate input
+ 
   if (!email || !password) {
+    console.log("0");
     return res.status(400).json({ message: 'Email and password are required.' });
   }
 
-  // Query the database for the admin user by email
+  
   const query = 'SELECT * FROM admin WHERE email = ?';
+  console.log("hmm");
   connection.query(query, [email], async (err, results) => {
     if (err) {
+      console.log("1");
       console.error('Database error:', err);
       return res.status(500).json({ message: 'Internal server error.' });
     }
 
-    // Check if admin exists
+    
     if (results.length === 0) {
+      console.log("2");
       return res.status(401).json({ message: 'Invalid email or password.' });
     }
 
     const admin = results[0];
 
-    // Compare password using bcrypt
+   
     const isPasswordValid = await bcrypt.compare(password, admin.password);
     if (!isPasswordValid) {
+      console.log("3");
       return res.status(401).json({ message: 'Invalid email or password.' });
     }
 
-    // Generate JWT token
+    
     const token = jwt.sign(
       { id: admin.id, role: admin.role },
       process.env.SECRET_KEY,
       { expiresIn: process.env.JWT_EXPIRES_IN || '1h' }
     );
 //
-    // Respond with the token
+    console.log(admin);    
     res.status(200).json({
       message: 'Login successful',
       token,
@@ -65,5 +72,56 @@ const authenticateToken = (req, res, next) => {
     next();
   });
 };
+
+// Admin Change Password API
+router.put('/change/password', authenticateToken, async (req, res) => {
+    const { currentPassword, newPassword } = req.body;
+  
+    // Validate input
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ message: 'Current and new passwords are required.' });
+    }
+  
+    try {
+      // Get the admin's information from the database
+      const query = 'SELECT * FROM admin WHERE id = ?';
+      connection.query(query, [req.user.id], async (err, results) => {
+        if (err) {
+          console.error('Database error:', err);
+          return res.status(500).json({ message: 'Internal server error.' });
+        }
+  
+        if (results.length === 0) {
+          return res.status(404).json({ message: 'Admin not found.' });
+        }
+  
+        const admin = results[0];
+  
+        // Verify current password
+        const isPasswordValid = await bcrypt.compare(currentPassword, admin.password);
+        if (!isPasswordValid) {
+          return res.status(401).json({ message: 'Current password is incorrect.' });
+        }
+  
+        // Hash the new password
+        const hashedPassword = await bcrypt.hash(newPassword, 10);
+  
+        // Update the password in the database
+        const updateQuery = 'UPDATE admin SET password = ? WHERE id = ?';
+        connection.query(updateQuery, [hashedPassword, req.user.id], (err, updateResult) => {
+          if (err) {
+            console.error('Database error:', err);
+            return res.status(500).json({ message: 'Failed to update password.' });
+          }
+  
+          res.status(200).json({ message: 'Password updated successfully.' });
+        });
+      });
+    } catch (err) {
+      console.error('Error:', err);
+      res.status(500).json({ message: 'An unexpected error occurred.' });
+    }
+  });
+  
 
 module.exports = router;
