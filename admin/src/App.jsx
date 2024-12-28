@@ -3,12 +3,15 @@ import {  Routes, Route } from 'react-router-dom';
 import AdminPanel from './Pages/adminDashboard';
 import HallsDetail from './Pages/Halls';
 import BookingsDetail from './Pages/Bookings';
-
+import LoginPage from './Pages/login';
+import { useAuthStore } from './store/authStore';
 const App = () => {
+  const user  = useAuthStore();
   return (
    
       <Routes>
-        <Route path="/" element={<AdminPanel />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/" element={user ? <AdminPanel />:<LoginPage /> } />
         <Route path="/halls" element={<HallsDetail />} />
         <Route path="/bookings" element={<BookingsDetail />} />
       </Routes>
