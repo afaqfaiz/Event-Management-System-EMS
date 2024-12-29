@@ -28,6 +28,7 @@ router.get("/getallcompanies", (req, res) => {
 
 router.delete('/deletecompany/:companyId', (req, res) => {
   const { companyId } = req.params;
+  console.log("in delete");
 
   const query = `DELETE FROM Company WHERE Company_ID = ?`;
 
