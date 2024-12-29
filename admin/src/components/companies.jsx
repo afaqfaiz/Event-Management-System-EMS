@@ -44,14 +44,13 @@ const CompaniesList = ({ searchQuery }) => {
     const confirm = window.confirm(`Are you sure you want to delete "${companyName}" company?`);
     if (confirm) {
       try {
-        const response = await fetch(`http://localhost:5000/api/admin/company/deletecompany${companyId}`, {
+        const response = await fetch(`http://localhost:5000/api/admin/company/deletecompany/${companyId}`, {
           method: 'DELETE',
         });
   
         if (response.ok) {
           alert('Company deleted successfully!');
-          // Optionally, refresh the list of companies
-          window.location.reload();
+          
         } else {
           const data = await response.json();
           alert(data.message || 'Failed to delete the company.');

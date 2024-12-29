@@ -1,52 +1,60 @@
-import React from 'react';
-import '../admin.css/Booking.css'
-
-const bookingsData = [
-  {
-    id: 1,
-    clientName: 'John Doe',
-    hallName: 'Grand Ballroom',
-    date: '2024-12-30',
-    time: '18:00 - 22:00',
-    paymentStatus: 'Paid',
-    status: 'Approved',
-  },
-  {
-    id: 2,
-    clientName: 'Jane Smith',
-    hallName: 'Conference Room A',
-    date: '2025-01-05',
-    time: '09:00 - 13:00',
-    paymentStatus: 'Unpaid',
-    status: 'Pending',
-  },
-];
+import React, { useEffect, useState } from 'react';
+import '../admin.css/Booking.css';
+import { useLocation } from 'react-router-dom';
 
 const BookingsDetail = () => {
-  const handleApprove = (id) => {
-    alert(`Booking with ID ${id} approved!`);
-    // Implement approval logic here
-  };
+  const location = useLocation();
+  const { companyId, companyName } = location.state || {};
+  console.log("id",companyId);
+  const [bookings, setBookings] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchBookings = async () => {
+      try {
+        const response = await fetch(`http://localhost:5000/api/admin/booking/getbookings/${companyId}`);
+        if (response.ok) {
+          const data = await response.json();
+          setBookings(data);
+          console.log("booking data",data);
+        } else {
+          console.error('Failed to fetch bookings.');
+        }
+      } catch (err) {
+        console.error('Error fetching bookings:', err);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (companyId) {
+      fetchBookings();
+    }
+  }, []);
+
+  if (loading) {
+    return <div>Loading bookings...</div>;
+  }
 
   return (
     <div className="bookings-detail">
-      <h2>Bookings for Company</h2>
+      <h2>Bookings for {companyName}</h2>
       <div className="bookings-list">
-        {bookingsData.map((booking) => (
-          <div key={booking.id} className="booking-card">
-            <h3>{booking.hallName}</h3>
-            <p>Client: {booking.clientName}</p>
-            <p>Date: {booking.date}</p>
-            <p>Time: {booking.time}</p>
-            <p>Payment Status: {booking.paymentStatus}</p>
-            <p>Status: {booking.status}</p>
-            {booking.status === 'Pending' && (
-              <button onClick={() => handleApprove(booking.id)} className="approve-btn">
-                Approve
-              </button>
-            )}
-          </div>
-        ))}
+        {bookings.length > 0 ? (
+          bookings.map((booking) => (
+            <div key={booking.id} className="booking-card">
+              <h3>{booking.hallName}</h3>
+              <p>Client: {booking.clientName}</p>
+              <p>Date: {booking.date}</p>
+              <p>Time: {booking.time}</p>
+              <p>Total Cost: ${booking.totalCost}</p>
+              <p>Payment Status: {booking.paymentStatus}</p>
+              <p>Status: {booking.bookingStatus}</p>
+            </div>
+          ))
+        ) : (
+          <p>No bookings found for this company.</p>
+        )}
       </div>
     </div>
   );
