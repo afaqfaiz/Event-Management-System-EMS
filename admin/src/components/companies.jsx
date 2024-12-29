@@ -40,6 +40,13 @@ const CompaniesList = ({ searchQuery }) => {
       state: { companyId, companyName },
     });
   };
+  const handleDeleteCompany = async (companyId,companyname)=>{
+    const confirm = window.confirm(`Are you sure you want to delete "${companyname}" company?`);
+    if (confirm) {
+
+    }
+
+  }
 
   const handleViewBookings = (companyId, companyName) => {
     navigate('/bookings', {
@@ -58,8 +65,11 @@ const CompaniesList = ({ searchQuery }) => {
       ) : filteredCompanies.length > 0 ? (
         filteredCompanies.map((company) => (
           <div key={company.Company_ID} className="company-card">
-            <h3>{company.Company_Name}</h3>
-            <p>{company.Company_Email}</p>
+            <h3>Name: {company.Company_Name}</h3>
+            <p>Email: {company.Company_Email}</p>
+            <p>Contact: {company.Company_Contact}</p>
+            <p>Address: {company.Company_Address}</p>
+            <p>Owner: {company.Company_Owner}</p>
             <div className="actions">
               <button
                 onClick={() => handleViewHalls(company.Company_ID, company.Company_Name)}
@@ -73,7 +83,7 @@ const CompaniesList = ({ searchQuery }) => {
               </button>
               <button
                 className="delete-btn"
-                onClick={() => alert(`Delete ${company.Company_Name}`)}
+                onClick={() => handleDeleteCompany(company.Company_ID,company.Company_Name)}
               >
                 Delete Company
               </button>
