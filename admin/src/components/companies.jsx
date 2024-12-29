@@ -40,13 +40,28 @@ const CompaniesList = ({ searchQuery }) => {
       state: { companyId, companyName },
     });
   };
-  const handleDeleteCompany = async (companyId,companyname)=>{
-    const confirm = window.confirm(`Are you sure you want to delete "${companyname}" company?`);
+  const handleDeleteCompany = async (companyId, companyName) => {
+    const confirm = window.confirm(`Are you sure you want to delete "${companyName}" company?`);
     if (confirm) {
-
+      try {
+        const response = await fetch(`http://localhost:5000/api/admin/company/deletecompany${companyId}`, {
+          method: 'DELETE',
+        });
+  
+        if (response.ok) {
+          alert('Company deleted successfully!');
+          // Optionally, refresh the list of companies
+          window.location.reload();
+        } else {
+          const data = await response.json();
+          alert(data.message || 'Failed to delete the company.');
+        }
+      } catch (err) {
+        console.error('Error deleting company:', err);
+        alert('Failed to connect to the server. Please try again later.');
+      }
     }
-
-  }
+  };
 
   const handleViewBookings = (companyId, companyName) => {
     navigate('/bookings', {
