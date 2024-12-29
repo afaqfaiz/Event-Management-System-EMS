@@ -26,4 +26,23 @@ router.get("/getallcompanies", (req, res) => {
   });
 });
 
+router.delete('/deletecompany/:companyId', (req, res) => {
+  const { companyId } = req.params;
+
+  const query = `DELETE FROM Company WHERE Company_ID = ?`;
+
+  connection.query(query, [companyId], (err, results) => {
+    if (err) {
+      console.error('Error deleting company:', err);
+      return res.status(500).json({ message: 'Internal Server Error' });
+    }
+
+    if (results.affectedRows === 0) {
+      return res.status(404).json({ message: 'Company not found.' });
+    }
+
+    res.json({ message: 'Company deleted successfully.' });
+  });
+});
+
 module.exports = router;
