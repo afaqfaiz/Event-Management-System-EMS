@@ -1,5 +1,5 @@
 /* Login.css */
-body {
+.login-body {
     margin: 0;
     font-family: 'Arial', sans-serif;
     background: linear-gradient(to right, #0072ff, #00c6ff);
@@ -73,6 +73,38 @@ body {
     margin-bottom: 15px;
     text-align: center;
   }
+  .navbar-right {
+    display: flex;
+    gap: 10px;
+    justify-content: right; 
+    align-items: center; 
+    height: 60px; 
+    padding: 0 20px; 
+  }
+  
+  .btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+  }
+  
+  .logout-btn {
+    background-color: #f44336;
+    color: white;
+     position: absolute; /* Absolute positioning to move freely */
+  /* bottom: 0; /* Align it at the bottom of the navbar */
+  right: 0; /* Align it to the right side of the navbar */
+  transform: translateX(-50px); /* Move button 50px to the right */
+   
+  }
+  
+  .logout-btn:hover {
+    background-color: #d32f2f;
+  }
+  
+
   
   @media screen and (max-width: 480px) {
     .login-container {

@@ -7,11 +7,12 @@ import LoginPage from './Pages/login';
 import { useAuthStore } from './store/authStore';
 const App = () => {
   const user  = useAuthStore();
+  const admin= user.user;
   return (
    
       <Routes>
         <Route path="/login" element={<LoginPage />} />
-        <Route path="/" element={user ? <AdminPanel />:<LoginPage /> } />
+        <Route path="/" element={admin ? <AdminPanel />:<LoginPage /> } />
         <Route path="/halls" element={<HallsDetail />} />
         <Route path="/bookings" element={<BookingsDetail />} />
       </Routes>

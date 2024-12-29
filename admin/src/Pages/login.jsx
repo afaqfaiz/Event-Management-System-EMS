@@ -28,7 +28,7 @@ const LoginPage = () => {
       
         const data = await response.json();
         localStorage.setItem("token", data.token); // Store JWT token
-        setuser(data.user);
+        setuser(data.admin);
         setError("");
         navigate("/"); // Navigate to admin dashboard
       } catch (err) {
@@ -38,6 +38,7 @@ const LoginPage = () => {
   };
 
   return (
+    <div className="login-body">
     <div className="login-container">
       <div className="login-form">
         <h2>Admin Login</h2>
@@ -70,6 +71,7 @@ const LoginPage = () => {
           </button>
         </form>
       </div>
+    </div>
     </div>
   );
 };
